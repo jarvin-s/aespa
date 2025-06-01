@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
 import { Bebas_Neue } from 'next/font/google'
@@ -20,7 +19,6 @@ const aespaFont = localFont({
 })
 
 export function Navbar() {
-    const pathname = usePathname()
     const [isOpen, setIsOpen] = useState(false)
     const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -48,13 +46,6 @@ export function Navbar() {
             document.removeEventListener('mousedown', handleClickOutside)
         }
     }, [])
-
-    const isActive = (path: string) => {
-        if (path === '/') {
-            return pathname === path
-        }
-        return pathname?.startsWith(path)
-    }
 
     return (
         <nav className='sticky top-0 z-50 w-full py-2 text-white'>
@@ -101,13 +92,13 @@ export function Navbar() {
 
                     <Link
                         href='#'
-                        className='hidden items-center rounded-lg bg-[#e4c2eb] p-2.5 md:flex'
+                        className='hidden items-center rounded-lg p-2.5 md:flex'
                     >
                         <Image
                             src='/images/naevis-logo.png'
-                            alt='IVE Logo'
-                            width={96}
-                            height={96}
+                            alt='naevis Logo'
+                            width={128}
+                            height={128}
                             className='rounded-full'
                         />
                     </Link>
@@ -193,15 +184,12 @@ export function Navbar() {
                     </Button>
                 </div>
                 <div
-                    className={`${bebas_neue.className} flex h-full flex-col items-center space-y-8 px-4`}
+                    className={`${bebas_neue.className} mt-20 flex h-full flex-col items-center space-y-8 px-4 lowercase ${aespaFont.className}`}
                 >
                     <Link
                         href='/'
                         className={cn(
-                            'block rounded-md px-3 py-2 text-8xl text-white',
-                            isActive('/')
-                                ? 'bg-pink-100 text-black'
-                                : 'transition-all duration-150 ease-in-out hover:text-pink-900'
+                            'block rounded-md px-3 py-2 text-8xl text-white hover:text-pink-200'
                         )}
                     >
                         Home
@@ -209,10 +197,7 @@ export function Navbar() {
                     <Link
                         href='/quiz'
                         className={cn(
-                            'block rounded-md px-3 py-2 text-9xl text-white',
-                            isActive('/quiz')
-                                ? 'bg-pink-100 text-black'
-                                : 'transition-all duration-150 ease-in-out hover:text-pink-900'
+                            'block rounded-md px-3 py-2 text-9xl text-white hover:text-pink-200'
                         )}
                     >
                         Quiz

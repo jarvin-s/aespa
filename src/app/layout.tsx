@@ -10,7 +10,7 @@ const inter = Inter_Tight({
 })
 
 export const metadata: Metadata = {
-    title: 'aespa',
+    title: 'aespa 에스파 | Be my ae!',
     description: 'An interactive quiz app for aespa fans',
 }
 
