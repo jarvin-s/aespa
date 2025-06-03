@@ -30,7 +30,7 @@
 .quiz-game {
     background-image:
         linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-        url('/images/quiz/background/aespa-armageddon.jpg');
+        url('/images/quiz/background/aespa-background-1.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
