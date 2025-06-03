@@ -5,16 +5,17 @@ const Hero = () => {
     return (
         <>
             <div className='relative flex w-screen flex-col items-center justify-center overflow-x-hidden text-white'>
-                <div className='mt-40 overflow-hidden'>
+                <div className='flex h-[80vh] items-center justify-center overflow-hidden'>
                     <Image
                         src='/images/logo.png'
-                        alt='aespa'
-                        width={600}
-                        height={600}
+                        alt='aespa logo'
+                        width={1000}
+                        height={1000}
                     />
                 </div>
             </div>
-            {/* AESPA VIDEO (BLACK MAMBA) */}
+
+            {/* AESPA VIDEO */}
             <div className='absolute top-0 left-0 z-[-1] size-full'>
                 <video
                     muted

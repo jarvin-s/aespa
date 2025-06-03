@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { Bebas_Neue } from 'next/font/google'
 import localFont from 'next/font/local'
 import { Button } from '@/components/ui/button'
+import { AuthButtons } from '../auth/AuthButtons'
 
 const bebas_neue = Bebas_Neue({
     subsets: ['latin'],
@@ -14,7 +15,7 @@ const bebas_neue = Bebas_Neue({
 })
 
 const aespaFont = localFont({
-    src: '/../../../../public/fonts/aespa_Regular.ttf',
+    src: '/../../../public/fonts/aespa_Regular.ttf',
     variable: '--font-aespa',
 })
 
@@ -90,7 +91,9 @@ export function Navbar() {
                         </div>
                     </div>
 
-                    <Link
+                    <div className='hidden items-center gap-4 md:flex'>
+                        <AuthButtons />
+                        {/* <Link
                         href='#'
                         className='hidden items-center rounded-lg p-2.5 md:flex'
                     >
@@ -101,10 +104,18 @@ export function Navbar() {
                             height={128}
                             className='rounded-full'
                         />
-                    </Link>
+                    </Link> */}
+                    </div>
 
                     {/* Mobile menu button */}
-                    <div className='md:hidden'>
+                    <div
+                        className={cn(
+                            'flex gap-2 md:hidden',
+                            isOpen ? 'hidden' : ''
+                        )}
+                    >
+                        {' '}
+                        <AuthButtons />
                         <Button
                             className='group z-[60] flex h-10 flex-col justify-center space-y-1 duration-300 ease-in-out md:hidden'
                             onClick={toggleMenu}

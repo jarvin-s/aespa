@@ -1,1 +1,43 @@
 @import 'tailwindcss';
+
+/* Clerk elements */
+.cl-internal-1dauvpw {
+    display: none;
+}
+
+.cl-internal-1hp5nqm {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .cl-avatarBox {
+        display: flex;
+        width: 2rem;
+        height: 2rem;
+    }
+
+    .cl-userButtonPopoverCard {
+        display: flex;
+        padding: 0 1rem 0 1rem;
+        width: 100%;
+    }
+
+    .cl-internal-1grbo8b {
+        max-width: 100%;
+    }
+}
+
+.quiz-game {
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+        url('/images/quiz/background/aespa-armageddon.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.dotted {
+    background-image: radial-gradient(#ffffff25 2px, transparent 2px);
+    background-size: 15px 15px;
+    background-color: rgba(255, 255, 255, 0);
+}
