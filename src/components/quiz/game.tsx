@@ -6,10 +6,16 @@ import Link from 'next/link'
 import { Bebas_Neue } from 'next/font/google'
 import { useUser } from '@clerk/nextjs'
 import Image from 'next/image'
+import localFont from 'next/font/local'
 
 const bebasNeue = Bebas_Neue({
     weight: '400',
     subsets: ['latin'],
+})
+
+const aespaFont = localFont({
+    src: '/../../../public/fonts/aespa_Regular.ttf',
+    variable: '--font-aespa',
 })
 
 interface QuizProps {
@@ -329,45 +335,44 @@ export default function Game({
             {/* Quiz Header */}
             <div className='mx-auto px-4 py-6'>
                 <div
-                    className={`${bebasNeue.className} flex items-center justify-between px-8`}
+                    className={`${bebasNeue.className} flex items-center justify-between`}
                 >
-                    <div className='w-1/3 text-center text-lg md:text-right md:text-5xl'>
-                        QUESTION {currentQuestion + 1} / {quizQuestions.length}
+                    <div className='w-1/3 text-left text-lg md:text-right md:text-5xl'>
+                        QUESTION{' '}
+                        <span className='text-purple-500'>
+                            {currentQuestion + 1} / {quizQuestions.length}
+                        </span>
                     </div>
                     <div className='flex w-1/3 items-center justify-center gap-2'>
                         <Image
                             src='/images/logo.png'
                             alt='aespa Logo'
-                            width={100}
-                            height={100}
+                            width={150}
+                            height={150}
+                            // className='h-auto w-16 sm:w-20 md:w-36'
                         />
-                        <span
-                            className={`${bebasNeue.className} text-lg md:text-5xl`}
-                        >
-                            QUIZ
-                        </span>
                     </div>
                     <div className='w-1/3 text-center text-lg md:text-left md:text-5xl'>
-                        SCORE {score}
+                        SCORE <span className='text-purple-500'>{score}</span>
                     </div>
                 </div>
             </div>
 
             {/* Progress bar */}
-            <div className='fixed right-0 bottom-0 left-0'>
+            <div className='fixed right-0 bottom-0 left-0 z-1'>
                 <Progress
                     value={(currentQuestion / quizQuestions.length) * 100}
-                    className='h-4 bg-pink-200'
-                    indicatorClassName='bg-pink-700'
+                    className='h-4 bg-purple-200'
+                    indicatorClassName='bg-purple-700'
                 />
             </div>
 
             {/* Quiz Content */}
-            <div className='flex h-[80vh] items-center justify-center px-4 py-12'>
-                <div className='relative mx-auto max-w-3xl'>
+            <div className='flex min-h-[calc(100vh-200px)] items-center justify-center px-4 py-12'>
+                <div className='relative mx-auto w-full max-w-3xl'>
                     {/* Question */}
                     <h2
-                        className={`${bebasNeue.className} text-center text-4xl font-bold md:text-7xl`}
+                        className={`${bebasNeue.className} text-center text-5xl font-bold md:text-7xl`}
                     >
                         {quizQuestions[currentQuestion].question}
                     </h2>
@@ -384,7 +389,7 @@ export default function Game({
                                     width={1000}
                                     height={1000}
                                     quality={100}
-                                    className='mb-4 h-auto w-full rounded-md'
+                                    className='mb-4 h-auto max-h-[40vh] w-full rounded-md object-contain'
                                     priority
                                 />
                             </div>
@@ -392,7 +397,7 @@ export default function Game({
                     </div>
 
                     {/* Options Grid */}
-                    <div className='md:h-[150px*: grid grid-cols-1 gap-4 md:grid-cols-2'>
+                    <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
                         {quizQuestions[currentQuestion].options.map(
                             (option, index) => (
                                 <button
@@ -415,7 +420,7 @@ export default function Game({
                                 >
                                     <div className='flex items-center gap-3'>
                                         <div
-                                            className={`flex h-8 w-8 items-center justify-center rounded-full ${
+                                            className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full ${
                                                 answered &&
                                                 option ===
                                                     quizQuestions[
@@ -434,7 +439,7 @@ export default function Game({
                                         >
                                             {String.fromCharCode(65 + index)}
                                         </div>
-                                        <span className='text-lg'>
+                                        <span className='text-base sm:text-lg'>
                                             {option}
                                         </span>
                                     </div>
@@ -445,7 +450,7 @@ export default function Game({
 
                     {/* Action Buttons */}
                     <div
-                        className={`${bebasNeue.className} mt-8 flex justify-center`}
+                        className={`${aespaFont.className} mt-8 flex justify-center`}
                     >
                         {!answered ? (
                             <Button
@@ -453,7 +458,7 @@ export default function Game({
                                 disabled={!highlightedOption}
                                 className='w-full bg-purple-700 px-12 py-8 text-4xl text-white hover:bg-purple-800 disabled:opacity-50 md:w-auto'
                             >
-                                SUBMIT ANSWER
+                                submit answer
                             </Button>
                         ) : (
                             <Button
@@ -461,8 +466,8 @@ export default function Game({
                                 className='w-full bg-purple-700 px-12 py-8 text-4xl text-white hover:bg-purple-800 md:w-auto'
                             >
                                 {currentQuestion < quizQuestions.length - 1
-                                    ? 'NEXT QUESTION'
-                                    : 'SEE RESULTS'}
+                                    ? 'next question'
+                                    : 'see results'}
                             </Button>
                         )}
                     </div>
