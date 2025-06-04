@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
-import { Bebas_Neue } from 'next/font/google'
+import { Roboto } from 'next/font/google'
 import '@/app/globals.css'
 import { ClerkProvider } from '@clerk/nextjs'
 
-const bebasNeue = Bebas_Neue({
+const roboto = Roboto({
     weight: ['400'],
     subsets: ['latin'],
-    variable: '--font-bebas-neue',
+    variable: '--font-roboto',
 })
 
 export const metadata: Metadata = {
@@ -22,7 +22,7 @@ export default function RootLayout({
     return (
         <ClerkProvider>
             <html lang='en'>
-                <body className={`${bebasNeue.variable} antialiased`}>
+                <body className={`${roboto.variable} antialiased`}>
                     {children}
                 </body>
             </html>

@@ -108,9 +108,7 @@ export default function QuizDetails({ id }: { id: string }) {
                 <Link href='/dashboard' className='text-white'>
                     <ArrowLeft />
                 </Link>
-                <h1
-                    className={`${aespaFont.className} flex-1 text-center text-5xl font-bold text-white md:text-7xl`}
-                >
+                <h1 className='flex-1 text-center text-5xl font-bold text-white md:text-7xl'>
                     Quiz details
                 </h1>
             </header>
