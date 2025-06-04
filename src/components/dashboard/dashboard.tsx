@@ -2,10 +2,16 @@
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, CheckCircle2, XCircle } from 'lucide-react'
+import { CheckCircle2, XCircle } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import { useUser } from '@clerk/nextjs'
 import { useEffect, useState } from 'react'
+import { Roboto } from 'next/font/google'
+
+const roboto = Roboto({
+    weight: '400',
+    subsets: ['latin'],
+})
 
 interface PastQuizzes {
     session_id: string
@@ -58,14 +64,14 @@ export default function Dashboard() {
     }
 
     return (
-        <div className='quiz-dashboard flex min-h-screen flex-col'>
-            <header className='relative flex w-full justify-center px-6 py-4'>
-                <div className='absolute top-4 left-4 md:top-6 md:left-8'>
-                    <Link href='/quiz'>
-                        <ArrowLeft className='h-5 w-5 text-white' />
-                    </Link>
-                </div>
-                <h1 className='text-3xl font-bold text-white md:text-7xl'>
+        <div
+            className={`${roboto.className} quiz-dashboard flex min-h-screen flex-col`}
+        >
+            <header className='relative mt-10 flex w-full justify-center px-6 py-4'>
+                <Link href='/quiz' className='text-white'>
+                    <ArrowLeft />
+                </Link>
+                <h1 className='flex-1 text-center text-3xl font-bold text-white md:text-7xl'>
                     Dashboard
                 </h1>
             </header>
@@ -202,5 +208,25 @@ export default function Dashboard() {
                 </div>
             </main>
         </div>
+    )
+}
+
+const ArrowLeft = () => {
+    return (
+        <svg
+            xmlns='http://www.w3.org/2000/svg'
+            width='24'
+            height='24'
+            viewBox='0 0 24 24'
+        >
+            <path
+                fill='none'
+                stroke='currentColor'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='2'
+                d='m12 19l-7-7l7-7m7 7H5'
+            />
+        </svg>
     )
 }

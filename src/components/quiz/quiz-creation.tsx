@@ -40,7 +40,7 @@ export default function QuizCreation() {
             </header>
 
             <main className='flex h-[80vh] flex-col items-center justify-center p-6 text-center'>
-                <div className='mx-auto w-full max-w-4xl'>
+                <div className='mx-auto w-full max-w-2xl'>
                     <div className='relative mb-8'>
                         <div className='relative overflow-hidden rounded-md p-8 shadow-xl'>
                             <h2 className='mb-4 text-4xl font-bold md:text-6xl'>
