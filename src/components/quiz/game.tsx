@@ -50,6 +50,7 @@ export default function Game({
     const [selectedAnswer, setSelectedAnswer] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [answered, setAnswered] = useState(false)
+    const [backgroundClass, setBackgroundClass] = useState('quiz-bg-1')
     const [answerHistory, setAnswerHistory] = useState<
         Array<{
             quizId: string
@@ -63,6 +64,11 @@ export default function Game({
     )
     const nextQuestion = currentQuestion + 1
     const isCompleted = nextQuestion > quizQuestions.length
+
+    useEffect(() => {
+        const bgNumber = Math.floor(Math.random() * 4) + 1
+        setBackgroundClass(`quiz-bg-${bgNumber}`)
+    }, [])
 
     const handleAnswerSelect = useCallback(
         (answer: string) => {
@@ -330,17 +336,20 @@ export default function Game({
             </div>
         </div>
     ) : (
-        <div className='quiz-game min-h-screen text-white'>
+        <div className={`quiz-game ${backgroundClass} min-h-screen text-white`}>
             <div className='dotted pointer-events-none absolute top-0 left-0 h-[100%] w-[100%] opacity-40' />
             {/* Quiz Header */}
             <div className='mx-auto px-4 py-6'>
                 <div
                     className={`${bebasNeue.className} flex items-center justify-between`}
                 >
-                    <div className='w-1/3 text-left text-lg md:text-right md:text-5xl'>
-                        QUESTION{' '}
-                        <span className='text-purple-500'>
-                            {currentQuestion + 1} / {quizQuestions.length}
+                    <Link href='/quiz'>
+                        <ArrowLeft />
+                    </Link>
+                    <div className='w-1/3 text-center text-lg md:text-right md:text-5xl'>
+                        QUESTION &nbsp;
+                        <span className='ml-2 text-purple-500'>
+                            {currentQuestion + 1}/{quizQuestions.length}
                         </span>
                     </div>
                     <div className='flex w-1/3 items-center justify-center gap-2'>
@@ -349,11 +358,11 @@ export default function Game({
                             alt='aespa Logo'
                             width={150}
                             height={150}
-                            // className='h-auto w-16 sm:w-20 md:w-36'
                         />
                     </div>
                     <div className='w-1/3 text-center text-lg md:text-left md:text-5xl'>
-                        SCORE <span className='text-purple-500'>{score}</span>
+                        SCORE{' '}
+                        <span className='ml-2 text-purple-500'>{score}</span>
                     </div>
                 </div>
             </div>
@@ -474,5 +483,25 @@ export default function Game({
                 </div>
             </div>
         </div>
+    )
+}
+
+const ArrowLeft = () => {
+    return (
+        <svg
+            xmlns='http://www.w3.org/2000/svg'
+            width='24'
+            height='24'
+            viewBox='0 0 24 24'
+        >
+            <path
+                fill='none'
+                stroke='currentColor'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='2'
+                d='m12 19l-7-7l7-7m7 7H5'
+            />
+        </svg>
     )
 }

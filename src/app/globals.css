@@ -27,13 +27,52 @@
     }
 }
 
-.quiz-game {
+.quiz-creation {
     background-image:
-        linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-        url('/images/quiz/background/aespa-background-1.jpg');
+        linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9)),
+        url('/images/quiz/background/aespa-quiz-create-bg.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+}
+
+.quiz-dashboard {
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7)),
+        url('/images/quiz/background/aespa-dashboard-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.quiz-game {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.quiz-bg-1 {
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+        url('/images/quiz/background/aespa-bg-1.jpg');
+}
+
+.quiz-bg-2 {
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+        url('/images/quiz/background/aespa-bg-2.jpg');
+}
+
+.quiz-bg-3 {
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+        url('/images/quiz/background/aespa-bg-3.jpg');
+}
+
+.quiz-bg-4 {
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+        url('/images/quiz/background/aespa-bg-4.jpg');
 }
 
 .dotted {
