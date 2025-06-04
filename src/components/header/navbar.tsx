@@ -74,7 +74,7 @@ export function Navbar() {
                             <Link
                                 href='/'
                                 className={cn(
-                                    'rounded-md px-3 py-2 text-4xl font-bold transition-colors hover:text-pink-200'
+                                    'rounded-md px-3 py-2 text-4xl font-bold transition-colors hover:text-purple-700'
                                 )}
                             >
                                 Home
@@ -83,7 +83,7 @@ export function Navbar() {
                             <Link
                                 href='/quiz'
                                 className={cn(
-                                    'rounded-md px-3 py-2 text-4xl font-bold transition-colors hover:text-pink-200'
+                                    'rounded-md px-3 py-2 text-4xl font-bold transition-colors hover:text-purple-700'
                                 )}
                             >
                                 Quiz
@@ -200,7 +200,7 @@ export function Navbar() {
                     <Link
                         href='/'
                         className={cn(
-                            'block rounded-md px-3 py-2 text-8xl text-white hover:text-pink-200'
+                            'block rounded-md px-3 py-2 text-8xl text-white hover:text-purple-700'
                         )}
                     >
                         Home
@@ -208,7 +208,7 @@ export function Navbar() {
                     <Link
                         href='/quiz'
                         className={cn(
-                            'block rounded-md px-3 py-2 text-9xl text-white hover:text-pink-200'
+                            'block rounded-md px-3 py-2 text-9xl text-white hover:text-purple-700'
                         )}
                     >
                         Quiz

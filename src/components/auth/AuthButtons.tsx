@@ -35,7 +35,7 @@ export function AuthButtons() {
                 <Button
                     variant='ghost'
                     size='sm'
-                    className={`${aespaFont.className} font-bold hover:underline md:mt-0 md:text-4xl`}
+                    className={`${aespaFont.className} font-bold hover:text-purple-700 md:mt-0 md:text-4xl`}
                 >
                     sign in
                 </Button>
