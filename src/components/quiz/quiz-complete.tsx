@@ -122,7 +122,7 @@ const QuizComplete = ({ score, totalQuestions }: QuizCompleteProps) => {
                                     className='w-64 border-[#6d6d6d2a] text-white hover:bg-purple-700'
                                 >
                                     <Link href='/dashboard'>
-                                        Back to Dashboard
+                                        Back to dashboard
                                     </Link>
                                 </Button>
                             </>

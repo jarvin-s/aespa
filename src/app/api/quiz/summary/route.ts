@@ -16,27 +16,27 @@ export async function GET(request: Request) {
         )
     }
 
-    const { data: quizDetails, error: quizDetailsError } = await supabase
+    const { data: quizSummary, error: quizSummaryError } = await supabase
         .from('quiz_sessions')
         .select('*, user_id')
         .eq('session_id', quizId)
         .single()
 
-    if (quizDetailsError) {
+    if (quizSummaryError) {
         return NextResponse.json(
-            { error: quizDetailsError.message },
+            { error: quizSummaryError.message },
             { status: 500 }
         )
     }
 
-    if (quizDetails.user_id !== userId) {
+    if (quizSummary.user_id !== userId) {
         return NextResponse.json(
             { error: 'Unauthorized access to quiz details' },
             { status: 403 }
         )
     }
 
-    return NextResponse.json({ quizDetails })
+    return NextResponse.json({ quizSummary })
 }
 
 export async function DELETE(request: Request) {
@@ -53,20 +53,20 @@ export async function DELETE(request: Request) {
         )
     }
 
-    const { data: quizDetails, error: quizDetailsError } = await supabase
+    const { data: quizSummary, error: quizSummaryError } = await supabase
         .from('quiz_sessions')
         .select('user_id')
         .eq('session_id', quizId)
         .single()
 
-    if (quizDetailsError) {
+    if (quizSummaryError) {
         return NextResponse.json(
-            { error: quizDetailsError.message },
+            { error: quizSummaryError.message },
             { status: 500 }
         )
     }
 
-    if (quizDetails.user_id !== userId) {
+    if (quizSummary.user_id !== userId) {
         return NextResponse.json(
             { error: 'Unauthorized to delete this quiz' },
             { status: 403 }

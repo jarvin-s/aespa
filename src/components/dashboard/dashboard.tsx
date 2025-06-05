@@ -58,11 +58,9 @@ export default function Dashboard() {
     }
 
     return (
-        <div
-            className='quiz-dashboard flex min-h-screen flex-col'
-        >
+        <div className='quiz-dashboard flex min-h-screen flex-col'>
             <header className='relative mt-10 flex w-full justify-center px-6 py-4'>
-                <Link href='/quiz' className='text-white'>
+                <Link href='/quiz' className='flex items-center text-white'>
                     <ArrowLeft />
                 </Link>
                 <h1 className='flex-1 text-center text-3xl font-bold text-white md:text-7xl'>
@@ -144,9 +142,9 @@ export default function Dashboard() {
                                                                         className='rounded-md border-purple-200 text-purple-800 hover:bg-pink-100'
                                                                     >
                                                                         <Link
-                                                                            href={`/quiz-details/${quiz.session_id}`}
+                                                                            href={`/quiz/summary/${quiz.session_id}`}
                                                                         >
-                                                                            Details
+                                                                            Summary
                                                                         </Link>
                                                                     </Button>
                                                                 </td>
@@ -176,7 +174,7 @@ export default function Dashboard() {
                                 <div className='mt-4'>
                                     <Link href='/quiz'>
                                         <Button className='rounded-md bg-pink-500 px-6 py-2 text-white hover:bg-pink-600'>
-                                            Take a Quiz
+                                            Take a quiz
                                         </Button>
                                     </Link>
                                 </div>
@@ -195,6 +193,12 @@ export default function Dashboard() {
                                     className='block rounded-md bg-white/10 p-4 transition-all hover:bg-white/20'
                                 >
                                     Take a new quiz
+                                </Link>
+                                <Link
+                                    href='/'
+                                    className='block rounded-md bg-white/10 p-4 transition-all hover:bg-white/20'
+                                >
+                                    Back to home
                                 </Link>
                             </div>
                         </div>
