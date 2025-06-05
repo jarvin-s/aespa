@@ -7,6 +7,7 @@ import { Bebas_Neue } from 'next/font/google'
 import Image from 'next/image'
 import localFont from 'next/font/local'
 import QuizComplete from '@/components/quiz/quiz-complete'
+import { motion, AnimatePresence } from 'motion/react'
 
 const bebasNeue = Bebas_Neue({
     weight: '400',
@@ -219,31 +220,14 @@ export default function Game({
         highlightedOption,
     ])
 
-    const Progress = ({
-        value,
-        className,
-        indicatorClassName,
-    }: {
-        value: number
-        className?: string
-        indicatorClassName?: string
-    }) => {
-        return (
-            <div
-                className={`relative w-full overflow-hidden ${className || ''}`}
-            >
-                <div
-                    className={`h-full ${indicatorClassName || ''}`}
-                    style={{ width: `${value}%` }}
-                />
-            </div>
-        )
-    }
-
     return isCompleted ? (
         <QuizComplete score={score} totalQuestions={quizQuestions.length} />
     ) : (
-        <div className={`quiz-game ${backgroundClass} min-h-screen text-white`}>
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className={`quiz-game ${backgroundClass} min-h-screen text-white`}
+        >
             <div className='dotted pointer-events-none absolute top-0 left-0 h-[100%] w-[100%] opacity-40' />
             {/* Quiz Header */}
             <div className='mx-auto px-4 py-6'>
@@ -251,51 +235,112 @@ export default function Game({
                     className={`${bebasNeue.className} flex items-center justify-between`}
                 >
                     <Link href='/quiz'>
-                        <ArrowLeft />
+                        <motion.div
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                        >
+                            <ArrowLeft />
+                        </motion.div>
                     </Link>
-                    <div className='w-1/3 text-center text-lg md:text-right md:text-5xl'>
+                    <motion.div
+                        className='w-1/3 text-center text-lg md:text-right md:text-5xl'
+                        initial={{ y: -20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                    >
                         QUESTION &nbsp;
-                        <span className='ml-2 text-purple-500'>
+                        <motion.span
+                            key={currentQuestion}
+                            initial={{ scale: 0.5, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            className='ml-2 text-purple-500'
+                        >
                             {currentQuestion + 1}/{quizQuestions.length}
-                        </span>
-                    </div>
-                    <div className='flex w-1/3 items-center justify-center gap-2'>
+                        </motion.span>
+                    </motion.div>
+                    <motion.div
+                        className='flex w-1/3 items-center justify-center gap-2'
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 0.3 }}
+                    >
                         <Image
                             src='/images/logo.png'
                             alt='aespa Logo'
                             width={150}
                             height={150}
                         />
-                    </div>
-                    <div className='w-1/3 text-center text-lg md:text-left md:text-5xl'>
+                    </motion.div>
+                    <motion.div
+                        className='w-1/3 text-center text-lg md:text-left md:text-5xl'
+                        initial={{ y: -20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                    >
                         SCORE{' '}
-                        <span className='ml-2 text-purple-500'>{score}</span>
-                    </div>
+                        <motion.span
+                            key={score}
+                            initial={{ scale: 1.5 }}
+                            animate={{ scale: 1 }}
+                            className='ml-2 text-purple-500'
+                        >
+                            {score}
+                        </motion.span>
+                    </motion.div>
                 </div>
             </div>
 
             {/* Progress bar */}
             <div className='fixed right-0 bottom-0 left-0 z-1'>
-                <Progress
-                    value={(currentQuestion / quizQuestions.length) * 100}
+                <motion.div
                     className='h-4 bg-purple-200'
-                    indicatorClassName='bg-purple-700'
-                />
+                    style={{
+                        width: '100%',
+                    }}
+                >
+                    <motion.div
+                        className='h-full bg-purple-700'
+                        initial={{
+                            width: `${(currentQuestion / quizQuestions.length) * 100}%`,
+                        }}
+                        animate={{
+                            width: `${((currentQuestion + 1) / quizQuestions.length) * 100}%`,
+                        }}
+                        transition={{ duration: 0.5 }}
+                    />
+                </motion.div>
             </div>
 
             {/* Quiz Content */}
             <div className='flex min-h-[calc(100vh-200px)] items-center justify-center px-4 py-12'>
-                <div className='relative mx-auto w-full max-w-3xl'>
+                <motion.div
+                    className='relative mx-auto w-full max-w-3xl'
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                >
                     {/* Question */}
-                    <h2
-                        className={`${bebasNeue.className} text-center text-5xl font-bold md:text-7xl`}
-                    >
-                        {quizQuestions[currentQuestion].question}
-                    </h2>
+                    <AnimatePresence mode='wait'>
+                        <motion.h2
+                            key={currentQuestion}
+                            initial={{ x: 100, y: 100, opacity: 0 }}
+                            animate={{ x: 0, y: 0, opacity: 1 }}
+                            transition={{ delay: 0.5 }}
+                            exit={{ x: -100, y: -100, opacity: 0 }}
+                            className={`${bebasNeue.className} text-center text-5xl font-bold md:text-7xl`}
+                        >
+                            {quizQuestions[currentQuestion].question}
+                        </motion.h2>
+                    </AnimatePresence>
 
                     <div className='relative overflow-hidden py-4'>
                         {quizQuestions[currentQuestion].image && (
-                            <div className='flex justify-center'>
+                            <motion.div
+                                className='flex justify-center'
+                                initial={{ scale: 0.8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ delay: 1.5, duration: 0.5 }}
+                            >
                                 <Image
                                     src={
                                         quizQuestions[currentQuestion].image ||
@@ -308,7 +353,7 @@ export default function Game({
                                     className='mb-4 h-auto max-h-[40vh] w-full rounded-md object-contain'
                                     priority
                                 />
-                            </div>
+                            </motion.div>
                         )}
                     </div>
 
@@ -316,8 +361,11 @@ export default function Game({
                     <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
                         {quizQuestions[currentQuestion].options.map(
                             (option, index) => (
-                                <button
-                                    key={index}
+                                <motion.button
+                                    key={option}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ delay: index * 0.2 + 1.5 }}
                                     onClick={() => handleAnswerSelect(option)}
                                     disabled={answered}
                                     className={`group relative cursor-pointer overflow-hidden rounded-md border-2 p-4 text-left transition-all ${
@@ -330,8 +378,8 @@ export default function Game({
                                                 option === selectedAnswer
                                               ? 'border-red-700 bg-red-700/20'
                                               : option === highlightedOption
-                                                ? 'border-purple-700 bg-purple-700/20'
-                                                : 'border-[#6d6d6d2a] bg-zinc-950'
+                                                ? 'border-purple-700 bg-purple-700/20 hover:scale-105'
+                                                : 'border-[#6d6d6d2a] bg-zinc-950 hover:scale-105'
                                     }`}
                                 >
                                     <div className='flex items-center gap-3'>
@@ -359,37 +407,52 @@ export default function Game({
                                             {option}
                                         </span>
                                     </div>
-                                </button>
+                                </motion.button>
                             )
                         )}
                     </div>
 
                     {/* Action Buttons */}
-                    <div
+                    <motion.div
                         className={`${aespaFont.className} mt-8 flex justify-center`}
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.8 }}
                     >
                         {!answered ? (
-                            <Button
-                                onClick={handleSubmitAnswer}
-                                disabled={!highlightedOption}
-                                className='w-full bg-purple-700 px-12 py-8 text-4xl text-white hover:bg-purple-800 disabled:opacity-50 md:w-auto'
+                            <motion.div
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
                             >
-                                submit answer
-                            </Button>
+                                <Button
+                                    onClick={handleSubmitAnswer}
+                                    disabled={!highlightedOption}
+                                    className='w-full bg-purple-700 px-12 py-8 text-4xl text-white hover:bg-purple-800 disabled:opacity-50 md:w-auto'
+                                >
+                                    submit answer
+                                </Button>
+                            </motion.div>
                         ) : (
-                            <Button
-                                onClick={handleNextQuestion}
-                                className='w-full bg-purple-700 px-12 py-8 text-4xl text-white hover:bg-purple-800 md:w-auto'
+                            <motion.div
+                                initial={{ scale: 0.8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
                             >
-                                {currentQuestion < quizQuestions.length - 1
-                                    ? 'next question'
-                                    : 'see results'}
-                            </Button>
+                                <Button
+                                    onClick={handleNextQuestion}
+                                    className='w-full bg-purple-700 px-12 py-8 text-4xl text-white hover:bg-purple-800 md:w-auto'
+                                >
+                                    {currentQuestion < quizQuestions.length - 1
+                                        ? 'next question'
+                                        : 'see results'}
+                                </Button>
+                            </motion.div>
                         )}
-                    </div>
-                </div>
+                    </motion.div>
+                </motion.div>
             </div>
-        </div>
+        </motion.div>
     )
 }
 

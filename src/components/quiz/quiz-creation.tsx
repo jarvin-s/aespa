@@ -5,13 +5,8 @@ import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { v4 as uuidv4 } from 'uuid'
 import { useUser } from '@clerk/nextjs'
-import { Roboto } from 'next/font/google'
 import localFont from 'next/font/local'
-
-const roboto = Roboto({
-    weight: '400',
-    subsets: ['latin'],
-})
+import { motion } from 'motion/react'
 
 const aespaFont = localFont({
     src: '/../../../public/fonts/aespa_Regular.ttf',
@@ -28,29 +23,54 @@ export default function QuizCreation() {
     }
 
     return (
-        <div
-            className={`${roboto.className} quiz-creation flex min-h-screen flex-col overflow-x-hidden text-white`}
-        >
+        <div className='quiz-creation flex min-h-screen flex-col overflow-x-hidden text-white'>
             <header className='relative flex w-full justify-center px-6 py-4'>
-                <h1
-                    className={`${aespaFont.className} text-3xl font-bold md:text-9xl`}
+                <motion.h1
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.75 }}
+                    className={`${aespaFont.className} text-7xl font-bold md:text-9xl`}
                 >
                     aespa quiz
-                </h1>
+                </motion.h1>
             </header>
 
             <main className='flex h-[80vh] flex-col items-center justify-center p-6 text-center'>
-                <div className='mx-auto w-full max-w-[863px]'>
+                <div className='mx-auto w-full max-w-[904px]'>
                     <div className='relative mb-8'>
-                        <div className='relative overflow-hidden rounded-md p-8 shadow-xl'>
-                            <h2 className='mb-4 text-4xl font-bold md:text-6xl'>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.75, delay: 0.5 }}
+                            className='relative overflow-hidden rounded-md p-8 shadow-xl'
+                        >
+                            <motion.h2
+                                initial={{ y: -50, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                transition={{
+                                    duration: 0.8,
+                                    delay: 0.7,
+                                    ease: 'easeInOut',
+                                }}
+                                className='mb-4 text-4xl font-bold md:text-6xl'
+                            >
                                 How well do you know aespa?
-                            </h2>
-                            <p className='mb-6 text-xl text-gray-300'>
+                            </motion.h2>
+                            <motion.p
+                                initial={{ x: -50, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1 }}
+                                transition={{ duration: 0.8, delay: 0.9 }}
+                                className='mb-6 text-xl text-gray-300 italic'
+                            >
                                 Test your knowledge about one of K-pop&apos;s
                                 most popular girl groups!
-                            </p>
-                            <div className='space-y-4'>
+                            </motion.p>
+                            <motion.div
+                                initial={{ y: 50, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                transition={{ duration: 0.8, delay: 1.1 }}
+                                className='space-y-4'
+                            >
                                 <Button
                                     onClick={handleStartQuiz}
                                     className='w-full rounded-md bg-purple-700 py-6 text-lg text-white shadow-md transition-all hover:bg-purple-800'
@@ -80,8 +100,8 @@ export default function QuizCreation() {
                                         </Button>
                                     </Link>
                                 </div>
-                            </div>
-                        </div>
+                            </motion.div>
+                        </motion.div>
                     </div>
                 </div>
             </main>
