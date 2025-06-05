@@ -1,4 +1,4 @@
-import QuizSummary from '@/components/quiz/quiz-summary'
+import QuizSummary from '@/components/quiz/summary'
 import React from 'react'
 
 const QuizSummaryPage = async ({ params }: { params: Promise<{ id: string }> }) => {

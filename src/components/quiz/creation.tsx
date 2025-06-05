@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { useUser } from '@clerk/nextjs'
 import localFont from 'next/font/local'
 import { motion } from 'motion/react'
+import { useState } from 'react'
 
 const aespaFont = localFont({
     src: '/../../../public/fonts/aespa_Regular.ttf',
@@ -15,9 +16,11 @@ const aespaFont = localFont({
 
 export default function QuizCreation() {
     const { user, isLoaded } = useUser()
+    const [isLoading, setIsLoading] = useState(false)
     const router = useRouter()
 
     const handleStartQuiz = () => {
+        setIsLoading(true)
         const quizId = uuidv4()
         router.push(`/quiz/${quizId}`)
     }
@@ -73,9 +76,17 @@ export default function QuizCreation() {
                             >
                                 <Button
                                     onClick={handleStartQuiz}
+                                    disabled={isLoading}
                                     className='w-full rounded-md bg-purple-700 py-6 text-lg text-white shadow-md transition-all hover:bg-purple-800'
                                 >
-                                    Start quiz
+                                    {isLoading ? (
+                                        <div className='flex items-center justify-center gap-2'>
+                                            <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent'></div>
+                                            <span>Loading</span>
+                                        </div>
+                                    ) : (
+                                        <span>Start quiz</span>
+                                    )}
                                 </Button>
                                 <div className='flex gap-4'>
                                     {isLoaded && user && (

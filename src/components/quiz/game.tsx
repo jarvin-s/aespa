@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { Bebas_Neue } from 'next/font/google'
 import Image from 'next/image'
 import localFont from 'next/font/local'
-import QuizComplete from '@/components/quiz/quiz-complete'
+import QuizComplete from '@/components/quiz/complete'
 import { motion, AnimatePresence } from 'motion/react'
 
 const bebasNeue = Bebas_Neue({
@@ -234,7 +234,7 @@ export default function Game({
                 <div
                     className={`${bebasNeue.className} flex items-center justify-between`}
                 >
-                    <Link href='/quiz'>
+                    <Link href='/quiz' className=''>
                         <motion.div
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}

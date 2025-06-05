@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
-import { Noto_Sans } from 'next/font/google'
+import { Open_Sans } from 'next/font/google'
 import '@/app/globals.css'
 import Navbar from '../../components/header/navbar'
 import { ClerkProvider } from '@clerk/nextjs'
 
-const notoSans = Noto_Sans({
+const openSans = Open_Sans({
     weight: ['400', '500', '600', '700'],
     subsets: ['latin'],
-    variable: '--font-noto-sans',
+    variable: '--font-open-sans',
 })
 
 export const metadata: Metadata = {
@@ -23,7 +23,7 @@ export default function RootLayout({
     return (
         <ClerkProvider>
             <html lang='en'>
-                <body className={`${notoSans.className} antialiased`}>
+                <body className={`${openSans.className} antialiased`}>
                     <Navbar />
                     {children}
                 </body>
