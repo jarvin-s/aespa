@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
-import { Roboto } from 'next/font/google'
+import { Noto_Sans } from 'next/font/google'
 import '@/app/globals.css'
 import { ClerkProvider } from '@clerk/nextjs'
 
-const roboto = Roboto({
+const notoSans = Noto_Sans({
     weight: ['400'],
     subsets: ['latin'],
-    variable: '--font-roboto',
+    variable: '--font-noto-sans',
 })
 
 export const metadata: Metadata = {
@@ -22,7 +22,7 @@ export default function RootLayout({
     return (
         <ClerkProvider>
             <html lang='en'>
-                <body className={`${roboto.variable} antialiased`}>
+                <body className={`${notoSans.className} antialiased`}>
                     {children}
                 </body>
             </html>

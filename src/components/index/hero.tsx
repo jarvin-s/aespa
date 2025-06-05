@@ -29,7 +29,7 @@ const Hero = () => {
                     <source src='/videos/hero-1.webm' type='video/webm' />
                     Your browser does not support the video tag.
                 </video>
-                <div className='absolute inset-0 bg-gradient-to-t from-black/100 to-transparent'></div>
+                <div className='absolute inset-0 bg-gradient-to-t from-black/100 via-black/40 to-black' />
             </div>
         </>
     )

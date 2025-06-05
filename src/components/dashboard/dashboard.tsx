@@ -6,12 +6,6 @@ import { CheckCircle2, XCircle } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import { useUser } from '@clerk/nextjs'
 import { useEffect, useState } from 'react'
-import { Roboto } from 'next/font/google'
-
-const roboto = Roboto({
-    weight: '400',
-    subsets: ['latin'],
-})
 
 interface PastQuizzes {
     session_id: string
@@ -65,7 +59,7 @@ export default function Dashboard() {
 
     return (
         <div
-            className={`${roboto.className} quiz-dashboard flex min-h-screen flex-col`}
+            className='quiz-dashboard flex min-h-screen flex-col'
         >
             <header className='relative mt-10 flex w-full justify-center px-6 py-4'>
                 <Link href='/quiz' className='text-white'>
@@ -127,34 +121,34 @@ export default function Dashboard() {
                                                                 10
                                                             </td>
                                                             {!quiz.completed ? (
-                                                                <td className='px-4 py-3 text-right text-sm whitespace-nowrap'>
-                                                                    <Link
-                                                                        href={`/quiz/${quiz.session_id}`}
-                                                                        className='flex justify-center'
+                                                                <td className='flex justify-center px-4 py-3 text-right text-sm'>
+                                                                    <Button
+                                                                        asChild
+                                                                        variant='outline'
+                                                                        size='sm'
+                                                                        className='rounded-md border-purple-200 text-purple-800 hover:bg-purple-100'
                                                                     >
-                                                                        <Button
-                                                                            variant='outline'
-                                                                            size='sm'
-                                                                            className='rounded-md border-purple-200 text-purple-800 hover:bg-purple-100'
+                                                                        <Link
+                                                                            href={`/quiz/${quiz.session_id}`}
                                                                         >
                                                                             Continue
-                                                                        </Button>
-                                                                    </Link>
+                                                                        </Link>
+                                                                    </Button>
                                                                 </td>
                                                             ) : (
-                                                                <td className='px-4 py-3 text-right text-sm whitespace-nowrap'>
-                                                                    <Link
-                                                                        href={`/quiz-details/${quiz.session_id}`}
-                                                                        className='flex justify-center'
+                                                                <td className='flex justify-center px-4 py-3 text-right text-sm'>
+                                                                    <Button
+                                                                        asChild
+                                                                        variant='outline'
+                                                                        size='sm'
+                                                                        className='rounded-md border-purple-200 text-purple-800 hover:bg-pink-100'
                                                                     >
-                                                                        <Button
-                                                                            variant='outline'
-                                                                            size='sm'
-                                                                            className='rounded-md border-purple-200 text-purple-800 hover:bg-pink-100'
+                                                                        <Link
+                                                                            href={`/quiz-details/${quiz.session_id}`}
                                                                         >
                                                                             Details
-                                                                        </Button>
-                                                                    </Link>
+                                                                        </Link>
+                                                                    </Button>
                                                                 </td>
                                                             )}
                                                             {quiz.completed ? (
