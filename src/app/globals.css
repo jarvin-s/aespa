@@ -1,5 +1,9 @@
 @import 'tailwindcss';
 
+body {
+    background-color: #000;
+}
+
 /* Clerk elements */
 .cl-internal-1dauvpw {
     display: none;

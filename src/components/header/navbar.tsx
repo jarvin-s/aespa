@@ -88,6 +88,14 @@ export function Navbar() {
                             >
                                 Quiz
                             </Link>
+                            <Link
+                                href='/members'
+                                className={cn(
+                                    'rounded-md px-3 py-2 text-4xl font-bold transition-colors hover:text-purple-700'
+                                )}
+                            >
+                                Members
+                            </Link>
                         </div>
                     </div>
 
@@ -212,6 +220,14 @@ export function Navbar() {
                         )}
                     >
                         Quiz
+                    </Link>
+                    <Link
+                        href='/members'
+                        className={cn(
+                            'block rounded-md px-3 py-2 text-9xl text-white hover:text-purple-700'
+                        )}
+                    >
+                        Members
                     </Link>
                 </div>
             </div>
