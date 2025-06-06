@@ -45,7 +45,7 @@ export default function QuizCreation() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.75, delay: 0.5 }}
-                            className='relative overflow-hidden rounded-md p-8 shadow-xl'
+                            className='relative overflow-hidden rounded-md p-8'
                         >
                             <motion.h2
                                 initial={{ y: -50, opacity: 0 }}
@@ -72,7 +72,7 @@ export default function QuizCreation() {
                                 initial={{ y: 50, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
                                 transition={{ duration: 0.8, delay: 1.1 }}
-                                className='space-y-4'
+                                className='mx-auto space-y-4 md:w-1/2'
                             >
                                 <Button
                                     onClick={handleStartQuiz}

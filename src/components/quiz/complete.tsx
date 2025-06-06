@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { useUser } from '@clerk/nextjs'
 import localFont from 'next/font/local'
-import { CircleDashed, Medal } from 'lucide-react'
+import { CircleDashed } from 'lucide-react'
 import { CardContent } from '../ui/card'
 import { Card } from '../ui/card'
 import { Share2 } from 'lucide-react'
@@ -73,16 +73,9 @@ const QuizComplete = ({ score, totalQuestions }: QuizCompleteProps) => {
                             </div>
                         </div>
 
-                        <div className='grid grid-cols-2 divide-x divide-white/20 border-t border-white/20'>
+                        <div className='flex justify-center border-t border-white/20'>
                             <div className='flex flex-col items-center justify-center p-6'>
-                                <Medal className='mb-2 h-6 w-6 text-yellow-300' />
-                                <p className='text-sm text-white/80'>
-                                    Your Rank
-                                </p>
-                                <p className='font-bold'>Top 25%</p>
-                            </div>
-                            <div className='flex flex-col items-center justify-center p-6'>
-                                <div className='w-full max-w-[350px]'>
+                                <div className='w-full'>
                                     <Button
                                         asChild
                                         className='w-full rounded-md bg-purple-700 px-6 py-2 text-white transition-all hover:bg-purple-800'
