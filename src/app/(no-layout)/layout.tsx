@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
-import { Open_Sans } from 'next/font/google'
+import { Inter_Tight } from 'next/font/google'
 import '@/app/globals.css'
 import { ClerkProvider } from '@clerk/nextjs'
 
-const openSans = Open_Sans({
+const interTight = Inter_Tight({
     weight: ['400'],
     subsets: ['latin'],
-    variable: '--font-open-sans',
+    variable: '--font-inter-tight',
 })
 
 export const metadata: Metadata = {
@@ -22,7 +22,7 @@ export default function RootLayout({
     return (
         <ClerkProvider>
             <html lang='en'>
-                <body className={`${openSans.className} antialiased`}>
+                <body className={`${interTight.className} antialiased`}>
                     {children}
                 </body>
             </html>

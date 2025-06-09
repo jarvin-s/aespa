@@ -5,14 +5,8 @@ import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { v4 as uuidv4 } from 'uuid'
 import { useUser } from '@clerk/nextjs'
-import localFont from 'next/font/local'
 import { motion } from 'motion/react'
 import { useState } from 'react'
-
-const aespaFont = localFont({
-    src: '/../../../public/fonts/aespa_Regular.ttf',
-    variable: '--font-aespa',
-})
 
 export default function QuizCreation() {
     const { user, isLoaded } = useUser()
@@ -27,18 +21,7 @@ export default function QuizCreation() {
 
     return (
         <div className='quiz-creation flex min-h-screen flex-col overflow-x-hidden text-white'>
-            <header className='relative flex w-full justify-center px-6 py-4'>
-                <motion.h1
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.75 }}
-                    className={`${aespaFont.className} text-7xl font-bold md:text-9xl`}
-                >
-                    aespa quiz
-                </motion.h1>
-            </header>
-
-            <main className='flex h-[80vh] flex-col items-center justify-center p-6 text-center'>
+            <main className='flex min-h-screen flex-col items-center justify-center p-6 text-center'>
                 <div className='mx-auto w-full max-w-[904px]'>
                     <div className='relative mb-8'>
                         <motion.div

@@ -8,6 +8,7 @@ import { Bebas_Neue } from 'next/font/google'
 import localFont from 'next/font/local'
 import { Button } from '@/components/ui/button'
 import { AuthButtons } from '../auth/AuthButtons'
+import Particles from '@/app/components/Particles/Particles'
 
 const bebas_neue = Bebas_Neue({
     subsets: ['latin'],
@@ -163,6 +164,7 @@ export function Navbar() {
                     isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
                 )}
             >
+                {isOpen && <Particles />}
                 <div className='flex items-center justify-between p-8'>
                     <Link href={'/'} className='flex items-center'>
                         <Image
@@ -208,7 +210,7 @@ export function Navbar() {
                     <Link
                         href='/'
                         className={cn(
-                            'block rounded-md px-3 py-2 text-8xl text-white hover:text-purple-700'
+                            'block rounded-md px-3 py-2 text-6xl text-white hover:text-purple-700'
                         )}
                     >
                         Home
@@ -216,7 +218,7 @@ export function Navbar() {
                     <Link
                         href='/quiz'
                         className={cn(
-                            'block rounded-md px-3 py-2 text-9xl text-white hover:text-purple-700'
+                            'block rounded-md px-3 py-2 text-6xl text-white hover:text-purple-700'
                         )}
                     >
                         Quiz
@@ -224,7 +226,7 @@ export function Navbar() {
                     <Link
                         href='/members'
                         className={cn(
-                            'block rounded-md px-3 py-2 text-9xl text-white hover:text-purple-700'
+                            'block rounded-md px-3 py-2 text-6xl text-white hover:text-purple-700'
                         )}
                     >
                         Members
