@@ -9,6 +9,7 @@ import localFont from 'next/font/local'
 import { Button } from '@/components/ui/button'
 import { AuthButtons } from '../auth/AuthButtons'
 import Particles from '@/app/components/Particles/Particles'
+import { motion } from 'motion/react'
 
 const bebas_neue = Bebas_Neue({
     subsets: ['latin'],
@@ -50,71 +51,80 @@ export function Navbar() {
     }, [])
 
     return (
-        <nav className='sticky top-0 z-50 w-full py-2 text-white'>
+        <motion.nav
+            initial={{ opacity: 0, y: -100 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.5, delay: 2.5 }}
+            className='sticky top-0 z-50 w-full py-2 text-white'
+        >
             <div className='mx-auto max-w-7xl px-4'>
                 <div className='flex items-center justify-between p-4'>
                     {/* Logo */}
-                    <Link href={'/'} className='flex items-center'>
-                        <Image
-                            src='/images/logo.png'
-                            alt='aespa Logo'
-                            width={128}
-                            height={128}
-                            className='rounded-full'
-                        />
-                    </Link>
+                    <div>
+                        <Link href={'/'} className='flex items-center'>
+                            <Image
+                                src='/images/logo.png'
+                                alt='aespa Logo'
+                                width={128}
+                                height={128}
+                                className='rounded-full'
+                            />
+                        </Link>
+                    </div>
 
                     {/* Desktop Navigation */}
                     <div className='hidden flex-1 md:block'>
-                        <div
+                        <motion.div
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
                             className={cn(
                                 'flex items-center justify-center space-x-8 lowercase',
                                 aespaFont.className
                             )}
                         >
-                            <Link
-                                href='/'
-                                className={cn(
-                                    'rounded-md px-3 py-2 text-4xl font-bold transition-colors hover:text-purple-700'
-                                )}
-                            >
-                                Home
-                            </Link>
+                            <div>
+                                <Link
+                                    href='/'
+                                    className={cn(
+                                        'rounded-md px-3 py-2 text-4xl font-bold transition-colors hover:text-purple-700'
+                                    )}
+                                >
+                                    Home
+                                </Link>
+                            </div>
 
-                            <Link
-                                href='/quiz'
-                                className={cn(
-                                    'rounded-md px-3 py-2 text-4xl font-bold transition-colors hover:text-purple-700'
-                                )}
-                            >
-                                Quiz
-                            </Link>
-                            <Link
-                                href='/members'
-                                className={cn(
-                                    'rounded-md px-3 py-2 text-4xl font-bold transition-colors hover:text-purple-700'
-                                )}
-                            >
-                                Members
-                            </Link>
-                        </div>
+                            <div>
+                                <Link
+                                    href='/quiz'
+                                    className={cn(
+                                        'rounded-md px-3 py-2 text-4xl font-bold transition-colors hover:text-purple-700'
+                                    )}
+                                >
+                                    Quiz
+                                </Link>
+                            </div>
+                            {/* <div>
+                                <Link
+                                    href='/members'
+                                    className={cn(
+                                        'rounded-md px-3 py-2 text-4xl font-bold transition-colors hover:text-purple-700'
+                                    )}
+                                >
+                                    Members
+                                </Link>
+                            </div> */}
+                        </motion.div>
                     </div>
 
-                    <div className='hidden items-center gap-4 md:flex'>
-                        <AuthButtons />
-                        {/* <Link
-                        href='#'
-                        className='hidden items-center rounded-lg p-2.5 md:flex'
+                    <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: 0.4 }}
+                        className='hidden items-center gap-4 md:flex'
                     >
-                        <Image
-                            src='/images/naevis-logo.png'
-                            alt='naevis Logo'
-                            width={128}
-                            height={128}
-                            className='rounded-full'
-                        />
-                    </Link> */}
-                    </div>
+                        <AuthButtons />
+                    </motion.div>
 
                     {/* Mobile menu button */}
                     <div
@@ -136,21 +146,14 @@ export function Navbar() {
                                     className={`absolute block h-[2px] w-6 bg-white/60 transition-all duration-300 ${
                                         isOpen ? 'rotate-45' : ''
                                     }`}
-                                ></span>
+                                />
                                 <span
                                     className={`absolute block h-[2px] bg-white/60 transition-all duration-300 ${
                                         isOpen
                                             ? 'w-6 -rotate-45'
                                             : 'ml-auto w-4 translate-y-[6px] group-hover:w-6'
                                     }`}
-                                ></span>
-                                <span
-                                    className={`absolute block h-[2px] w-6 bg-white/60 transition-all duration-300 ${
-                                        isOpen
-                                            ? 'opacity-0'
-                                            : '-translate-y-[6px] opacity-0'
-                                    }`}
-                                ></span>
+                                />
                             </div>
                         </Button>
                     </div>
@@ -207,33 +210,39 @@ export function Navbar() {
                 <div
                     className={`${bebas_neue.className} mt-20 flex h-full flex-col items-center space-y-8 px-4 lowercase ${aespaFont.className}`}
                 >
-                    <Link
-                        href='/'
-                        className={cn(
-                            'block rounded-md px-3 py-2 text-6xl text-white hover:text-purple-700'
-                        )}
-                    >
-                        Home
-                    </Link>
-                    <Link
-                        href='/quiz'
-                        className={cn(
-                            'block rounded-md px-3 py-2 text-6xl text-white hover:text-purple-700'
-                        )}
-                    >
-                        Quiz
-                    </Link>
-                    <Link
-                        href='/members'
-                        className={cn(
-                            'block rounded-md px-3 py-2 text-6xl text-white hover:text-purple-700'
-                        )}
-                    >
-                        Members
-                    </Link>
+                    <div>
+                        <Link
+                            href='/'
+                            className={cn(
+                                'block rounded-md px-3 py-2 text-6xl text-white hover:text-purple-700'
+                            )}
+                        >
+                            Home
+                        </Link>
+                    </div>
+                    <div>
+                        <Link
+                            href='/quiz'
+                            className={cn(
+                                'block rounded-md px-3 py-2 text-6xl text-white hover:text-purple-700'
+                            )}
+                        >
+                            Quiz
+                        </Link>
+                    </div>
+                    {/* <div>
+                        <Link
+                            href='/members'
+                            className={cn(
+                                'block rounded-md px-3 py-2 text-6xl text-white hover:text-purple-700'
+                            )}
+                        >
+                            Members
+                        </Link>
+                    </div> */}
                 </div>
             </div>
-        </nav>
+        </motion.nav>
     )
 }
 
