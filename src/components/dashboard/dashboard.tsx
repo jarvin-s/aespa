@@ -257,7 +257,7 @@ export default function QuizDashboard() {
                     </div>
 
                     <div className='max-w-4xl'>
-                        <div className='rounded-md bg-gradient-to-br from-pink-500 to-purple-600 p-6 text-white shadow-lg'>
+                        <div className='rounded-md bg-gradient-to-br from-purple-400 to-purple-800 p-6 text-white shadow-lg'>
                             <h3 className='mb-4 text-xl font-bold'>
                                 Quick links
                             </h3>
@@ -268,12 +268,12 @@ export default function QuizDashboard() {
                                 >
                                     Take a new quiz
                                 </Link>
-                                <Link
+                                {/* <Link
                                     href='/leaderboard'
                                     className='block rounded-md bg-white/10 p-4 transition-all hover:bg-white/20'
                                 >
                                     Check out the leaderboard
-                                </Link>
+                                </Link> */}
                                 <Link
                                     href='/'
                                     className='block rounded-md bg-white/10 p-4 transition-all hover:bg-white/20'

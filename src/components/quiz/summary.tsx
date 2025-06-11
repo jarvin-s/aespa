@@ -6,12 +6,6 @@ import { CheckCircle2, XCircle, Trash2 } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import { useUser } from '@clerk/nextjs'
 import { useEffect, useState } from 'react'
-import localFont from 'next/font/local'
-
-const aespaFont = localFont({
-    src: '/../../../public/fonts/aespa_Regular.ttf',
-    display: 'swap',
-})
 
 interface Question {
     id: number
@@ -103,7 +97,7 @@ export default function QuizSummary({ id }: { id: string }) {
     }
 
     return (
-        <div className='quiz-creation flex min-h-screen flex-col gap-10'>
+        <div className='quiz-creation flex min-h-screen flex-col gap-4'>
             <header className='relative mt-10 flex w-full justify-center px-6 py-4'>
                 <Link
                     href='/dashboard'
@@ -280,16 +274,14 @@ export default function QuizSummary({ id }: { id: string }) {
 
                             <div className='flex justify-center space-x-4'>
                                 <Link className='w-full' href='/dashboard'>
-                                    <Button
-                                        className={`${aespaFont.className} w-full bg-purple-500 text-xl text-white hover:bg-purple-600`}
-                                    >
+                                    <Button className='w-full bg-purple-500 text-xl text-white hover:bg-purple-600'>
                                         Back to dashboard
                                     </Button>
                                 </Link>
                                 <Link className='w-full' href='/quiz'>
                                     <Button
                                         variant='outline'
-                                        className={`${aespaFont.className} w-full border-purple-500 text-xl text-white hover:bg-purple-500`}
+                                        className='w-full border-purple-500 text-xl text-white hover:bg-purple-500'
                                     >
                                         Take another quiz
                                     </Button>
