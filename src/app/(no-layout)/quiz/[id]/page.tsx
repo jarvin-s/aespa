@@ -81,13 +81,11 @@ export default function GamePage({
 
     if (loading) {
         return (
-            <div className='quiz-game flex min-h-screen items-center justify-center bg-black'>
-                <div className='flex items-center space-x-2'>
-                    <div className='h-4 w-4 animate-bounce rounded-full bg-purple-400 [animation-delay:-0.3s]'></div>
-                    <div className='h-4 w-4 animate-bounce rounded-full bg-purple-400 [animation-delay:-0.15s]'></div>
-                    <div className='h-4 w-4 animate-bounce rounded-full bg-purple-400'></div>
-                    <span className='text-4xl font-bold text-purple-400'>
-                        Loading...
+            <div className='flex min-h-screen items-center justify-center'>
+                <div className='flex items-center justify-center space-x-2'>
+                    <div className='h-10 w-10 animate-spin rounded-full border-2 border-purple-700 border-t-transparent' />
+                    <span className='text-3xl font-bold text-white'>
+                        Loading
                     </span>
                 </div>
             </div>
@@ -100,7 +98,13 @@ export default function GamePage({
             quizId={id}
             initialQuestion={session?.current_question || 0}
             initialScore={session?.score || 0}
-            initialAnswerHistory={session?.answer_history || []}
+            initialAnswerHistory={(session?.answer_history || []).map(
+                (entry) => ({
+                    ...entry,
+                    timeToAnswer: 0,
+                    pointsEarned: 0,
+                })
+            )}
         />
     )
 }
