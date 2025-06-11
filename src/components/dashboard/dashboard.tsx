@@ -150,8 +150,8 @@ export default function QuizDashboard() {
                                                                     <td className='px-6 py-4'>
                                                                         <div className='whitespace-nowrap text-gray-900'>
                                                                             Quiz{' '}
-                                                                            {index +
-                                                                                1}
+                                                                            {completedQuizzes.length -
+                                                                                index}
                                                                         </div>
                                                                     </td>
                                                                     <td className='px-6 py-4 whitespace-nowrap text-gray-900'>

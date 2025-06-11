@@ -19,6 +19,15 @@ const aespaFont = localFont({
     variable: '--font-aespa',
 })
 
+interface AnswerHistoryEntry {
+    quizId: string
+    userAnswer: string
+    correctAnswer: string
+    correct: boolean
+    timeToAnswer: number
+    pointsEarned: number
+}
+
 interface QuizProps {
     questions: {
         question: string
@@ -30,12 +39,66 @@ interface QuizProps {
     quizId: string
     initialQuestion: number
     initialScore: number
-    initialAnswerHistory: Array<{
-        quizId: string
-        userAnswer: string
-        correctAnswer: string
-        correct: boolean
-    }>
+    initialAnswerHistory: AnswerHistoryEntry[]
+}
+
+const PieTimer = ({ progress }: { progress: number }) => {
+    const size = 60
+    const strokeWidth = 4
+    const center = size / 2
+    const radius = size / 2 - strokeWidth / 2
+    const circumference = 2 * Math.PI * radius
+
+    return (
+        <div className='relative flex items-center justify-center'>
+            <svg width={size} height={size} className='-rotate-90'>
+                {/* Background circle */}
+                <circle
+                    stroke='rgba(168, 85, 247, 0.1)'
+                    fill='none'
+                    strokeWidth={strokeWidth}
+                    r={radius}
+                    cx={center}
+                    cy={center}
+                />
+
+                {/* Animated timer circle */}
+                <motion.circle
+                    stroke='rgba(197, 141, 250, 0.8)'
+                    fill='none'
+                    strokeWidth={strokeWidth}
+                    r={radius}
+                    cx={center}
+                    cy={center}
+                    strokeDasharray={circumference}
+                    initial={{ strokeDashoffset: 0 }}
+                    animate={{
+                        strokeDashoffset: circumference * (1 - progress),
+                    }}
+                    transition={{ duration: 0.1, ease: 'linear' }}
+                    strokeLinecap='round'
+                />
+            </svg>
+            <motion.span
+                className='absolute text-xl font-bold'
+                initial={{ scale: 1 }}
+                animate={{
+                    scale: progress < 0.3 ? [1, 1.2, 1] : 1,
+                    color:
+                        progress < 0.3
+                            ? [
+                                  'rgb(168, 85, 247)',
+                                  'rgb(239, 68, 68)',
+                                  'rgb(239, 68, 68)',
+                              ]
+                            : 'rgb(255, 255, 255)',
+                }}
+                transition={{ duration: 0.3 }}
+            >
+                {Math.max(0, Math.min(10, Math.floor(progress * 10)))}
+            </motion.span>
+        </div>
+    )
 }
 
 export default function Game({
@@ -51,14 +114,17 @@ export default function Game({
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [answered, setAnswered] = useState(false)
     const [backgroundClass, setBackgroundClass] = useState('quiz-bg-1')
-    const [answerHistory, setAnswerHistory] = useState<
-        Array<{
-            quizId: string
-            userAnswer: string
-            correctAnswer: string
-            correct: boolean
-        }>
-    >(initialAnswerHistory)
+    const [questionStartTime, setQuestionStartTime] = useState<number | null>(
+        null
+    )
+    const [currentTime, setCurrentTime] = useState<number>(0)
+    const [answerHistory, setAnswerHistory] = useState<AnswerHistoryEntry[]>(
+        initialAnswerHistory.map((entry) => ({
+            ...entry,
+            timeToAnswer: entry.timeToAnswer || 0,
+            pointsEarned: entry.pointsEarned || 0,
+        }))
+    )
     const [highlightedOption, setHighlightedOption] = useState<string | null>(
         null
     )
@@ -70,6 +136,36 @@ export default function Game({
         setBackgroundClass(`quiz-bg-${bgNumber}`)
     }, [])
 
+    useEffect(() => {
+        setQuestionStartTime(null)
+        const timer = setTimeout(() => {
+            setQuestionStartTime(Date.now())
+        }, 2000)
+
+        return () => clearTimeout(timer)
+    }, [currentQuestion])
+
+    useEffect(() => {
+        if (!questionStartTime || answered) return
+
+        const interval = setInterval(() => {
+            setCurrentTime(Date.now())
+        }, 100)
+
+        return () => clearInterval(interval)
+    }, [questionStartTime, answered])
+
+    const calculateTimeBasedScore = (
+        timeInSeconds: number,
+        isCorrect: boolean
+    ): number => {
+        if (!isCorrect) return 0
+
+        const cappedTime = Math.min(timeInSeconds, 10)
+        const score = Math.round(1000 - (cappedTime / 10) * 900)
+        return Math.max(score, 100)
+    }
+
     const handleAnswerSelect = useCallback(
         (answer: string) => {
             if (answered) return
@@ -79,24 +175,29 @@ export default function Game({
     )
 
     const handleSubmitAnswer = useCallback(() => {
-        if (answered || !highlightedOption) return
+        if (answered || !highlightedOption || !questionStartTime) return
         setSelectedAnswer(highlightedOption)
         setAnswered(true)
-    }, [answered, highlightedOption])
+        setCurrentTime(Date.now())
+    }, [answered, highlightedOption, questionStartTime])
 
     const handleNextQuestion = useCallback(async () => {
-        if (isSubmitting) return
+        if (isSubmitting || !questionStartTime) return
         setIsSubmitting(true)
 
+        const timeToAnswer = (currentTime - questionStartTime) / 1000
         const isCorrect =
             selectedAnswer === quizQuestions[currentQuestion].correct_answer
+        const pointsEarned = calculateTimeBasedScore(timeToAnswer, isCorrect)
 
-        const newScore = isCorrect ? score + 1 : score
+        const newScore = score + pointsEarned
         const newAnswerEntry = {
             quizId,
             userAnswer: selectedAnswer,
             correctAnswer: quizQuestions[currentQuestion].correct_answer,
             correct: isCorrect,
+            timeToAnswer,
+            pointsEarned,
         }
 
         setScore(newScore)
@@ -150,6 +251,8 @@ export default function Game({
         answerHistory,
         nextQuestion,
         isSubmitting,
+        questionStartTime,
+        currentTime,
     ])
 
     useEffect(() => {
@@ -319,6 +422,19 @@ export default function Game({
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.4 }}
                 >
+                    {/* Timer */}
+                    <div className='mb-8 flex justify-center'>
+                        <PieTimer
+                            progress={
+                                1 -
+                                Math.min(
+                                    (currentTime - questionStartTime!) / 10000,
+                                    1
+                                )
+                            }
+                        />
+                    </div>
+
                     {/* Question */}
                     <AnimatePresence mode='wait'>
                         <motion.h2
@@ -365,10 +481,10 @@ export default function Game({
                                     key={option}
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
-                                    transition={{ delay: index * 0.2 + 1.5 }}
+                                    transition={{ delay: index * 0.2 + 1 }}
                                     onClick={() => handleAnswerSelect(option)}
                                     disabled={answered}
-                                    className={`group relative cursor-pointer overflow-hidden rounded-md border-2 p-4 text-left transition-all ${
+                                    className={`group relative cursor-pointer overflow-hidden rounded-md border-2 p-4 text-left ${
                                         answered &&
                                         option ===
                                             quizQuestions[currentQuestion]
@@ -378,8 +494,8 @@ export default function Game({
                                                 option === selectedAnswer
                                               ? 'border-red-700 bg-red-700/20'
                                               : option === highlightedOption
-                                                ? 'border-purple-700 bg-purple-700/20 hover:scale-105'
-                                                : 'border-[#6d6d6d2a] bg-zinc-950 hover:scale-105'
+                                                ? 'border-purple-700 bg-purple-700/20'
+                                                : 'border-[#6d6d6d2a] bg-zinc-950'
                                     }`}
                                 >
                                     <div className='flex items-center gap-3'>
@@ -406,6 +522,39 @@ export default function Game({
                                         <span className='text-base sm:text-lg'>
                                             {option}
                                         </span>
+                                        {answered &&
+                                            option === selectedAnswer && (
+                                                <motion.div
+                                                    initial={{
+                                                        scale: 0,
+                                                        opacity: 0,
+                                                    }}
+                                                    animate={{
+                                                        scale: 1,
+                                                        opacity: 1,
+                                                    }}
+                                                    className={`ml-auto rounded-full px-4 py-1 text-sm font-bold ${
+                                                        option ===
+                                                        quizQuestions[
+                                                            currentQuestion
+                                                        ].correct_answer
+                                                            ? 'bg-green-700'
+                                                            : 'bg-red-700'
+                                                    }`}
+                                                >
+                                                    {option ===
+                                                    quizQuestions[
+                                                        currentQuestion
+                                                    ].correct_answer
+                                                        ? `+${calculateTimeBasedScore(
+                                                              (currentTime -
+                                                                  questionStartTime!) /
+                                                                  1000,
+                                                              true
+                                                          )} pts`
+                                                        : '+0 pts'}
+                                                </motion.div>
+                                            )}
                                     </div>
                                 </motion.button>
                             )
@@ -426,7 +575,9 @@ export default function Game({
                             >
                                 <Button
                                     onClick={handleSubmitAnswer}
-                                    disabled={!highlightedOption}
+                                    disabled={
+                                        !highlightedOption || !questionStartTime
+                                    }
                                     className='w-full bg-purple-700 px-12 py-8 text-4xl text-white hover:bg-purple-800 disabled:opacity-50 md:w-auto'
                                 >
                                     submit answer
