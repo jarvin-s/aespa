@@ -3,6 +3,7 @@ import { Inter_Tight } from 'next/font/google'
 import '@/app/globals.css'
 import { ClerkProvider } from '@clerk/nextjs'
 import { Analytics } from '@vercel/analytics/react'
+import { PostHogProvider } from '@/app/providers'
 
 const interTight = Inter_Tight({
     weight: ['400'],
@@ -24,8 +25,10 @@ export default function RootLayout({
         <ClerkProvider>
             <html lang='en'>
                 <body className={`${interTight.className} antialiased`}>
-                    {children}
-                    <Analytics />
+                    <PostHogProvider>
+                        {children}
+                        <Analytics />
+                    </PostHogProvider>
                 </body>
             </html>
         </ClerkProvider>
