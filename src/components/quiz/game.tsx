@@ -484,7 +484,7 @@ export default function Game({
                                     transition={{ delay: index * 0.2 + 1 }}
                                     onClick={() => handleAnswerSelect(option)}
                                     disabled={answered}
-                                    className={`group relative cursor-pointer overflow-hidden rounded-md border-2 p-4 text-left transition-all ${
+                                    className={`group relative cursor-pointer overflow-hidden rounded-md border-2 p-4 text-left ${
                                         answered &&
                                         option ===
                                             quizQuestions[currentQuestion]
