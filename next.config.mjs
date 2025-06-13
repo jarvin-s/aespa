@@ -8,6 +8,11 @@ const nextConfig = {
                 hostname: 'vtjgzrqjqscktkuajuqk.supabase.co',
                 pathname: '/**',
             },
+            {
+                protocol: 'https',
+                hostname: 'img.clerk.com',
+                pathname: '/**',
+            },
         ],
     },
     async rewrites() {

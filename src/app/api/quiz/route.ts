@@ -1,5 +1,34 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/app/utils/supabase/server'
+import { auth, clerkClient } from '@clerk/nextjs/server'
+
+async function updateLeaderboard(userId: string, username: string, avatar: string) {
+    const supabase = await createClient()
+
+    const { data: existingEntry, error: fetchError } = await supabase
+        .from('quiz_leaderboard')
+        .select('*')
+        .eq('user_id', userId)
+        .single()
+
+    if (fetchError && fetchError.code !== 'PGRST116') {  // PGRST116 is "not found" error
+        throw new Error(`Failed to check existing leaderboard entry: ${fetchError.message}`)
+    }
+
+    if (!existingEntry) {
+        const { error: insertError } = await supabase
+            .from('quiz_leaderboard')
+            .insert({
+                user_id: userId,
+                username: username,
+                avatar: avatar
+            })
+
+        if (insertError) {
+            throw new Error(`Failed to insert leaderboard entry: ${insertError.message}`)
+        }
+    }
+}
 
 export async function GET() {
     const supabase = await createClient()
@@ -23,6 +52,13 @@ export async function PUT(request: Request) {
 
     try {
         const supabase = await createClient()
+
+        const { userId } = await auth()
+        console.log('Auth result:', { userId })
+
+        if (!userId) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
 
         const body = await request.json()
 
@@ -68,6 +104,19 @@ export async function PUT(request: Request) {
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
 
+        if (completed && !existingSession.completed) {
+            console.log('Quiz completed, updating leaderboard')
+            try {
+                await updateLeaderboardAsync(userId)
+            } catch (error) {
+                console.error('Failed to update leaderboard:', error)
+                return NextResponse.json({
+                    error: 'Failed to update leaderboard',
+                    details: error instanceof Error ? error.message : 'Unknown error'
+                }, { status: 500 })
+            }
+        }
+
         return NextResponse.json({ success: true })
     } catch (error) {
         return NextResponse.json({
@@ -75,4 +124,12 @@ export async function PUT(request: Request) {
             details: error instanceof Error ? error.message : 'Unknown error'
         }, { status: 500 })
     }
+}
+
+async function updateLeaderboardAsync(userId: string) {
+    const clerk = await clerkClient()
+    const user = await clerk.users.getUser(userId)
+    const username = user.username || user.emailAddresses[0]?.emailAddress || 'Anonymous'
+    const avatar = user.imageUrl || '/images/default-avatar.png'
+    await updateLeaderboard(userId, username, avatar)
 }

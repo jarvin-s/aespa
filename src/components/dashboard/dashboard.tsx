@@ -98,12 +98,12 @@ export default function QuizDashboard() {
                     <div className='mb-8'>
                         {loading ? (
                             <div className='flex justify-center py-8'>
-                                <div className='h-6 w-6 animate-spin rounded-full border-2 border-pink-500 border-t-transparent'></div>
+                                <div className='h-6 w-6 animate-spin rounded-full border-2 border-purple-500 border-t-transparent'></div>
                             </div>
                         ) : completedQuizzes.length > 0 ? (
                             <Card className='overflow-hidden bg-white'>
                                 <CardHeader>
-                                    <CardTitle className='text-black'>
+                                    <CardTitle className='text-2xl text-black'>
                                         Quiz history
                                     </CardTitle>
                                 </CardHeader>
@@ -239,13 +239,13 @@ export default function QuizDashboard() {
                                 </CardContent>
                             </Card>
                         ) : (
-                            <div className='rounded-md border border-pink-100 bg-pink-50 py-12 text-center'>
+                            <div className='rounded-md border border-purple-100 bg-purple-50 py-12 text-center'>
                                 <p className='text-gray-600'>
                                     You haven&apos;t completed any quizzes yet!
                                 </p>
                                 <div className='mt-4'>
                                     <Link href='/quiz'>
-                                        <Button className='rounded-md bg-pink-500 px-6 py-2 text-white hover:bg-pink-600'>
+                                        <Button className='rounded-md bg-purple-500 px-6 py-2 text-white hover:bg-purple-600'>
                                             Take a quiz
                                         </Button>
                                     </Link>
@@ -266,12 +266,12 @@ export default function QuizDashboard() {
                                 >
                                     Take a new quiz
                                 </Link>
-                                {/* <Link
-                                    href='/leaderboard'
+                                <Link
+                                    href='/quiz/leaderboard'
                                     className='block rounded-md bg-white/10 p-4 transition-all hover:bg-white/20'
                                 >
                                     Check out the leaderboard
-                                </Link> */}
+                                </Link>
                                 <Link
                                     href='/'
                                     className='block rounded-md bg-white/10 p-4 transition-all hover:bg-white/20'
