@@ -267,7 +267,7 @@ export default function QuizDashboard() {
                                     Take a new quiz
                                 </Link>
                                 <Link
-                                    href='/quiz/leaderboard'
+                                    href='/leaderboard'
                                     className='block rounded-md bg-white/10 p-4 transition-all hover:bg-white/20'
                                 >
                                     Check out the leaderboard
