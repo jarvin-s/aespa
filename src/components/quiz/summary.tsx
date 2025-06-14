@@ -67,17 +67,6 @@ export default function QuizSummary({ id }: { id: string }) {
         }
     }, [id])
 
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString)
-        return new Intl.DateTimeFormat('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        }).format(date)
-    }
-
     const handleDelete = async () => {
         try {
             const response = await fetch(`/api/quiz/summary?id=${id}`, {
@@ -125,67 +114,6 @@ export default function QuizSummary({ id }: { id: string }) {
                         </div>
                     ) : quizSummary ? (
                         <div className='space-y-6'>
-                            <div className='rounded-md border-2 border-purple-500 bg-white p-6'>
-                                <h2 className='mb-4 text-2xl font-bold text-purple-700'>
-                                    Summary
-                                </h2>
-                                <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-                                    <div className='rounded-md bg-purple-50 p-4'>
-                                        <p className='text-sm text-purple-700'>
-                                            Date taken
-                                        </p>
-                                        <p className='font-medium text-gray-800'>
-                                            {formatDate(quizSummary.created_at)}
-                                        </p>
-                                    </div>
-                                    <div className='rounded-md bg-purple-50 p-4'>
-                                        <p className='text-sm text-purple-700'>
-                                            Final score
-                                        </p>
-                                        <p className='font-medium text-gray-800'>
-                                            {quizSummary.score} /{' '}
-                                            {quizSummary.questions.length}
-                                        </p>
-                                    </div>
-                                    <div className='rounded-md bg-purple-50 p-4'>
-                                        <p className='text-sm text-purple-700'>
-                                            Status
-                                        </p>
-                                        <div className='flex items-center space-x-2'>
-                                            {quizSummary.completed ? (
-                                                <>
-                                                    <CheckCircle2 className='h-5 w-5 text-green-600' />
-                                                    <p className='font-medium text-green-600'>
-                                                        Completed
-                                                    </p>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <XCircle className='h-5 w-5 text-red-600' />
-                                                    <p className='font-medium text-red-600'>
-                                                        Incomplete
-                                                    </p>
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div className='rounded-md bg-purple-50 p-4'>
-                                        <p className='text-sm text-purple-700'>
-                                            Percentage
-                                        </p>
-                                        <p className='font-medium text-gray-800'>
-                                            {Math.round(
-                                                (quizSummary.score /
-                                                    quizSummary.questions
-                                                        .length) *
-                                                    100
-                                            )}
-                                            %
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
                             <div className='rounded-md border-2 border-purple-500 bg-white p-6'>
                                 <h2 className='mb-4 text-2xl font-bold text-purple-700'>
                                     Questions review

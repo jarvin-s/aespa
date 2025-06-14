@@ -17,14 +17,13 @@ interface PastQuizzes {
     completed: boolean
     created_at: string
     score: number
+    questions: string[]
     title?: string
     timeSpent?: string
-    currentQuestion?: number
-    totalQuestions?: number
 }
 
 const getScorePercentage = (score: number, total: number) => {
-    return Math.round((score / total) * 100)
+    return Math.floor((score / (total * 1000)) * 100)
 }
 
 const getScoreColor = (percentage: number) => {
@@ -94,7 +93,7 @@ export default function QuizDashboard() {
             </header>
 
             <main className='flex-1 p-6'>
-                <div className='mx-auto max-w-4xl'>
+                <div className='mx-auto max-w-7xl'>
                     <div className='mb-8'>
                         {loading ? (
                             <div className='flex justify-center py-8'>
@@ -137,7 +136,9 @@ export default function QuizDashboard() {
                                                                 quiz.completed
                                                                     ? getScorePercentage(
                                                                           quiz.score,
-                                                                          10000
+                                                                          quiz
+                                                                              .questions
+                                                                              .length
                                                                       )
                                                                     : 0
                                                             return (
@@ -254,7 +255,7 @@ export default function QuizDashboard() {
                         )}
                     </div>
 
-                    <div className='max-w-4xl'>
+                    <div className='max-w-7xl'>
                         <div className='rounded-md bg-gradient-to-br from-purple-400 to-purple-800 p-6 text-white shadow-lg'>
                             <h3 className='mb-4 text-xl font-bold'>
                                 Quick links

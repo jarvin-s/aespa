@@ -21,8 +21,10 @@ interface QuizSession {
 
 export default function GamePage({
     params,
+    searchParams,
 }: {
     params: Promise<{ id: string }>
+    searchParams: Promise<{ questions?: string }>
 }) {
     const [questions, setQuestions] = useState([])
     const [loading, setLoading] = useState(true)
@@ -48,7 +50,10 @@ export default function GamePage({
                 setSession(existingSession)
                 setQuestions(existingSession.questions)
             } else {
-                const response = await fetch(`/api/quiz`)
+                const questionCount = (await searchParams).questions || '10'
+                const response = await fetch(
+                    `/api/quiz?questions=${questionCount}`
+                )
                 const data = await response.json()
                 const newQuestions = data.questions
 
@@ -77,7 +82,7 @@ export default function GamePage({
         }
 
         fetchSession()
-    }, [id, supabase, router, user])
+    }, [id, supabase, router, user, searchParams])
 
     if (loading) {
         return (

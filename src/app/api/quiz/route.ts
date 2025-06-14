@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/app/utils/supabase/server'
 import { auth, clerkClient } from '@clerk/nextjs/server'
 
@@ -30,12 +30,15 @@ async function updateLeaderboard(userId: string, username: string, avatar: strin
     }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     const supabase = await createClient()
+    const searchParams = request.nextUrl.searchParams
+    const questionCount = Number(searchParams.get('questions')) || 10
 
     const { data: questions, error } = await supabase
         .from('random_questions')
         .select('*')
+        .limit(questionCount)
 
     if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
