@@ -50,10 +50,10 @@ const QuizComplete = ({ score }: QuizCompleteProps) => {
                         </div>
 
                         <div className='flex justify-center'>
-                            <div className='flex w-full flex-col items-center justify-center gap-4 md:w-auto'>
+                            <div className='flex w-full flex-col items-center justify-center gap-4 md:w-1/2'>
                                 <Button
                                     asChild
-                                    className='w-full rounded-md bg-purple-700 px-6 py-2 text-white transition-all hover:bg-purple-800'
+                                    className='w-full rounded-md bg-purple-700 py-6 text-lg text-white transition-all hover:bg-purple-800'
                                 >
                                     <Link href={`/quiz`}>New quiz</Link>
                                 </Button>
@@ -62,7 +62,7 @@ const QuizComplete = ({ score }: QuizCompleteProps) => {
                                         <Button
                                             asChild
                                             variant='outline'
-                                            className='w-full border-[#6d6d6d2a] text-white hover:bg-purple-700'
+                                            className='w-full border-[#6d6d6d2a] py-6 text-lg text-white hover:bg-purple-700'
                                         >
                                             <Link href='/dashboard'>
                                                 Back to dashboard
@@ -73,7 +73,7 @@ const QuizComplete = ({ score }: QuizCompleteProps) => {
                                     <Button
                                         asChild
                                         variant='outline'
-                                        className='w-full border-[#6d6d6d2a] text-white hover:bg-purple-700'
+                                        className='w-full border-[#6d6d6d2a] py-6 text-lg text-white hover:bg-purple-700'
                                     >
                                         <Link href='/'>Back to home</Link>
                                     </Button>

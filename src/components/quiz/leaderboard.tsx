@@ -3,7 +3,13 @@
 import { useEffect, useState } from 'react'
 import { useUser } from '@clerk/nextjs'
 import Image from 'next/image'
+import Link from 'next/link'
+import { Bebas_Neue } from 'next/font/google'
 
+const bebasNeue = Bebas_Neue({
+    subsets: ['latin'],
+    weight: ['400'],
+})
 interface LeaderboardEntry {
     rank: number
     username: string
@@ -79,9 +85,16 @@ export default function Leaderboard() {
 
     return (
         <div className='quiz-leaderboard'>
-            <div className='mx-auto min-h-screen max-w-7xl px-4 py-8'>
-                <h1 className='mb-8 text-center text-4xl font-bold text-white'>
-                    Quiz leaderboard
+            <div className='mx-auto min-h-screen max-w-7xl px-4 py-8 text-white'>
+                <div className='absolute top-10 left-4 md:top-14 md:left-8'>
+                    <Link href='/quiz'>
+                        <ArrowLeft />
+                    </Link>
+                </div>
+                <h1
+                    className={`${bebasNeue.className} mb-8 text-center text-7xl font-bold`}
+                >
+                    Leaderboard
                 </h1>
 
                 {/* Top 3 Players Cards */}
@@ -342,5 +355,25 @@ export default function Leaderboard() {
                 )}
             </div>
         </div>
+    )
+}
+
+const ArrowLeft = () => {
+    return (
+        <svg
+            xmlns='http://www.w3.org/2000/svg'
+            width='24'
+            height='24'
+            viewBox='0 0 24 24'
+        >
+            <path
+                fill='none'
+                stroke='currentColor'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='2'
+                d='m12 19l-7-7l7-7m7 7H5'
+            />
+        </svg>
     )
 }

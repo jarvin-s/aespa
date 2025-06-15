@@ -52,19 +52,11 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PUT(request: Request) {
-
     try {
         const supabase = await createClient()
-
         const { userId } = await auth()
-        console.log('Auth result:', { userId })
-
-        if (!userId) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-        }
 
         const body = await request.json()
-
         const { quizId, currentQuestion, score, completed, answerHistory } = body
 
         if (!quizId) {
@@ -107,8 +99,9 @@ export async function PUT(request: Request) {
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
 
-        if (completed && !existingSession.completed) {
-            console.log('Quiz completed, updating leaderboard')
+        // Only update leaderboard if user is authenticated and quiz is newly completed
+        if (userId && completed && !existingSession.completed) {
+            console.log('Quiz completed by authenticated user, updating leaderboard')
             try {
                 await updateLeaderboardAsync(userId)
             } catch (error) {

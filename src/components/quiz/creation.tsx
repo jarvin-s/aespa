@@ -20,7 +20,7 @@ export default function QuizCreation() {
     const { user, isLoaded } = useUser()
     const [isLoading, setIsLoading] = useState(false)
     const [showConfig, setShowConfig] = useState(false)
-    const [selectedQuestions, setSelectedQuestions] = useState(5)
+    const [selectedQuestions, setSelectedQuestions] = useState<number | null>(null)
     const router = useRouter()
 
     const startQuizConfig = () => {
@@ -172,11 +172,11 @@ export default function QuizCreation() {
                                         <Button
                                             onClick={() =>
                                                 startQuizWithQuestions(
-                                                    selectedQuestions
+                                                    selectedQuestions!
                                                 )
                                             }
                                             className='w-full rounded-md bg-purple-700 py-6 text-lg text-white transition-all hover:bg-purple-800'
-                                            disabled={isLoading}
+                                            disabled={isLoading || selectedQuestions === null}
                                         >
                                             {isLoading ? (
                                                 <div className='flex items-center justify-center gap-2'>
