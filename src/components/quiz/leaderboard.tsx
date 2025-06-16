@@ -234,7 +234,7 @@ export default function Leaderboard() {
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody className='divide-muted divide-y bg-white'>
+                            <tbody className='divide-muted divide-y bg-white text-black'>
                                 {leaderboardData.map((entry) => {
                                     const isCurrentUser =
                                         user &&
@@ -294,19 +294,23 @@ export default function Leaderboard() {
                             <h3 className='text-sm font-bold text-purple-700'>
                                 Total participants
                             </h3>
-                            <p className='text-2xl'>{stats.totalUsers}</p>
+                            <p className='text-2xl text-black'>
+                                {stats.totalUsers}
+                            </p>
                         </div>
                         <div className='bg-card rounded-lg bg-white p-6'>
                             <h3 className='text-sm font-bold text-purple-700'>
                                 Total quizzes taken
                             </h3>
-                            <p className='text-2xl'>{stats.totalQuizzes}</p>
+                            <p className='text-2xl text-black'>
+                                {stats.totalQuizzes}
+                            </p>
                         </div>
                         <div className='bg-card rounded-lg bg-white p-6'>
                             <h3 className='text-sm font-bold text-purple-700'>
                                 Average score
                             </h3>
-                            <p className='text-2xl'>
+                            <p className='text-2xl text-black'>
                                 {stats.averageScore.toFixed(1)}
                             </p>
                         </div>
@@ -314,7 +318,9 @@ export default function Leaderboard() {
                             <h3 className='text-sm font-bold text-purple-700'>
                                 Highest score
                             </h3>
-                            <p className='text-2xl'>{stats.topScore}</p>
+                            <p className='text-2xl text-black'>
+                                {stats.topScore}
+                            </p>
                         </div>
                     </div>
                 )}
@@ -327,7 +333,7 @@ export default function Leaderboard() {
                         </h3>
                         <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
                             <div className='text-center'>
-                                <p className='text-2xl font-bold'>
+                                <p className='text-2xl font-bold text-black'>
                                     #{stats.userStats.rank}
                                 </p>
                                 <p className='text-sm text-purple-700'>
@@ -335,7 +341,7 @@ export default function Leaderboard() {
                                 </p>
                             </div>
                             <div className='text-center'>
-                                <p className='text-2xl font-bold'>
+                                <p className='text-2xl font-bold text-black'>
                                     {stats.userStats.score}
                                 </p>
                                 <p className='text-sm text-purple-700'>
@@ -343,7 +349,7 @@ export default function Leaderboard() {
                                 </p>
                             </div>
                             <div className='text-center'>
-                                <p className='text-2xl font-bold'>
+                                <p className='text-2xl font-bold text-black'>
                                     {stats.userStats.quizzesTaken}
                                 </p>
                                 <p className='text-sm text-purple-700'>
