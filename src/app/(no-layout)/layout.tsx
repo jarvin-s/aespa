@@ -11,8 +11,18 @@ const interTight = Inter_Tight({
 })
 
 export const metadata: Metadata = {
+    metadataBase: new URL('https://aespa-quiz.vercel.app'),
     title: 'aespa 에스파 | Be my ae!',
-    description: 'An interactive quiz app for aespa fans',
+    description: 'An interactive quiz app for aespa fans!',
+    openGraph: {
+        title: 'aespa 에스파 | Be my ae!',
+        description: 'An interactive quiz app for aespa fans!',
+        images: [
+            {
+                url: '/images/logo.png',
+            },
+        ],
+    },
 }
 
 export default function RootLayout({

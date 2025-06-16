@@ -55,7 +55,7 @@ export function Navbar() {
             initial={{ opacity: 0, y: -100 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.5, delay: 2.5 }}
-            className='sticky top-0 z-50 w-full py-2 text-white'
+            className='z-50 w-full py-2 text-white'
         >
             <div className='mx-auto max-w-7xl px-4'>
                 <div className='flex items-center justify-between p-4'>

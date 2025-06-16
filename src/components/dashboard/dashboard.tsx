@@ -17,14 +17,13 @@ interface PastQuizzes {
     completed: boolean
     created_at: string
     score: number
+    questions: string[]
     title?: string
     timeSpent?: string
-    currentQuestion?: number
-    totalQuestions?: number
 }
 
 const getScorePercentage = (score: number, total: number) => {
-    return Math.round((score / total) * 100)
+    return Math.floor((score / (total * 1000)) * 100)
 }
 
 const getScoreColor = (percentage: number) => {
@@ -75,8 +74,6 @@ export default function QuizDashboard() {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
         }).format(date)
     }
 
@@ -96,16 +93,16 @@ export default function QuizDashboard() {
             </header>
 
             <main className='flex-1 p-6'>
-                <div className='mx-auto max-w-4xl'>
+                <div className='mx-auto max-w-7xl'>
                     <div className='mb-8'>
                         {loading ? (
                             <div className='flex justify-center py-8'>
-                                <div className='h-6 w-6 animate-spin rounded-full border-2 border-pink-500 border-t-transparent'></div>
+                                <div className='h-6 w-6 animate-spin rounded-full border-2 border-purple-500 border-t-transparent'></div>
                             </div>
                         ) : completedQuizzes.length > 0 ? (
                             <Card className='overflow-hidden bg-white'>
                                 <CardHeader>
-                                    <CardTitle className='text-black'>
+                                    <CardTitle className='text-2xl text-black'>
                                         Quiz history
                                     </CardTitle>
                                 </CardHeader>
@@ -139,7 +136,9 @@ export default function QuizDashboard() {
                                                                 quiz.completed
                                                                     ? getScorePercentage(
                                                                           quiz.score,
-                                                                          10000
+                                                                          quiz
+                                                                              .questions
+                                                                              .length
                                                                       )
                                                                     : 0
                                                             return (
@@ -241,13 +240,13 @@ export default function QuizDashboard() {
                                 </CardContent>
                             </Card>
                         ) : (
-                            <div className='rounded-md border border-pink-100 bg-pink-50 py-12 text-center'>
+                            <div className='rounded-md border border-purple-100 bg-purple-50 py-12 text-center'>
                                 <p className='text-gray-600'>
                                     You haven&apos;t completed any quizzes yet!
                                 </p>
                                 <div className='mt-4'>
                                     <Link href='/quiz'>
-                                        <Button className='rounded-md bg-pink-500 px-6 py-2 text-white hover:bg-pink-600'>
+                                        <Button className='rounded-md bg-purple-500 px-6 py-2 text-white hover:bg-purple-600'>
                                             Take a quiz
                                         </Button>
                                     </Link>
@@ -256,8 +255,8 @@ export default function QuizDashboard() {
                         )}
                     </div>
 
-                    <div className='max-w-4xl'>
-                        <div className='rounded-md bg-gradient-to-br from-pink-500 to-purple-600 p-6 text-white shadow-lg'>
+                    <div className='max-w-7xl'>
+                        <div className='rounded-md bg-gradient-to-br from-purple-400 to-purple-800 p-6 text-white shadow-lg'>
                             <h3 className='mb-4 text-xl font-bold'>
                                 Quick links
                             </h3>
