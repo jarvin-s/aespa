@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/app/utils/supabase/server'
 import { auth, clerkClient } from '@clerk/nextjs/server'
+import { calculateLevelProgression } from '@/lib/xp-system'
 
 async function updateLeaderboard(userId: string, username: string, avatar: string) {
     const supabase = await createClient()
@@ -11,7 +12,7 @@ async function updateLeaderboard(userId: string, username: string, avatar: strin
         .eq('user_id', userId)
         .single()
 
-    if (fetchError && fetchError.code !== 'PGRST116') {  // PGRST116 is "not found" error
+    if (fetchError && fetchError.code !== 'PGRST116') {
         throw new Error(`Failed to check existing leaderboard entry: ${fetchError.message}`)
     }
 
@@ -27,6 +28,67 @@ async function updateLeaderboard(userId: string, username: string, avatar: strin
         if (insertError) {
             throw new Error(`Failed to insert leaderboard entry: ${insertError.message}`)
         }
+    }
+}
+
+async function updateUserXP(userId: string, scoreEarned: number) {
+    const supabase = await createClient()
+
+    const { data: currentAccount, error: fetchError } = await supabase
+        .from('user_accounts')
+        .select('*')
+        .eq('user_id', userId)
+        .single()
+
+    if (fetchError && fetchError.code !== 'PGRST116') {
+        throw new Error(`Failed to fetch user account: ${fetchError.message}`)
+    }
+
+    if (!currentAccount) {
+        const user = await (await clerkClient()).users.getUser(userId)
+        const username = user.username || user.emailAddresses[0]?.emailAddress || 'Unknown'
+        const avatar = user.imageUrl || '/images/default-avatar.png'
+
+        const progression = calculateLevelProgression(0, 1, scoreEarned)
+
+        const { error: createError } = await supabase
+            .from('user_accounts')
+            .insert([{
+                user_id: userId,
+                username,
+                avatar,
+                total_xp: progression.newTotalXP,
+                current_level: progression.newLevel,
+                xp_to_next_level: progression.xpToNextLevel,
+                total_quizzes_completed: 1,
+                total_score: scoreEarned
+            }])
+
+        if (createError) {
+            throw new Error(`Failed to create user account: ${createError.message}`)
+        }
+        return
+    }
+
+    const progression = calculateLevelProgression(
+        currentAccount.total_xp,
+        currentAccount.current_level,
+        scoreEarned
+    )
+
+    const { error: updateError } = await supabase
+        .from('user_accounts')
+        .update({
+            total_xp: progression.newTotalXP,
+            current_level: progression.newLevel,
+            xp_to_next_level: progression.xpToNextLevel,
+            total_quizzes_completed: currentAccount.total_quizzes_completed + 1,
+            total_score: currentAccount.total_score + scoreEarned
+        })
+        .eq('user_id', userId)
+
+    if (updateError) {
+        throw new Error(`Failed to update user account: ${updateError.message}`)
     }
 }
 
@@ -99,15 +161,20 @@ export async function PUT(request: Request) {
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
 
-        // Only update leaderboard if user is authenticated and quiz is newly completed
         if (userId && completed && !existingSession.completed) {
-            console.log('Quiz completed by authenticated user, updating leaderboard')
+            console.log('Quiz completed by authenticated user, updating leaderboard and XP')
             try {
                 await updateLeaderboardAsync(userId)
+                
+                try {
+                    await updateUserXP(userId, score || 0)
+                } catch (xpError) {
+                    console.error('Failed to update user XP:', xpError)
+                }
             } catch (error) {
-                console.error('Failed to update leaderboard:', error)
+                console.error('Failed to update leaderboard or XP:', error)
                 return NextResponse.json({
-                    error: 'Failed to update leaderboard',
+                    error: 'Failed to update user progress',
                     details: error instanceof Error ? error.message : 'Unknown error'
                 }, { status: 500 })
             }

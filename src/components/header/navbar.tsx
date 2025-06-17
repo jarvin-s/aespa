@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { AuthButtons } from '../auth/AuthButtons'
 import Particles from '@/app/components/Particles/Particles'
 import { motion } from 'motion/react'
+import UserProfile from '@/components/ui/user-profile'
 
 const aespaFont = localFont({
     src: '/../../../public/fonts/aespa_Regular.ttf',
@@ -122,6 +123,7 @@ export function Navbar() {
                         transition={{ duration: 0.5, delay: 0.4 }}
                         className='hidden items-center gap-4 md:flex'
                     >
+                        <UserProfile showCompact={true} />
                         <AuthButtons />
                     </motion.div>
 

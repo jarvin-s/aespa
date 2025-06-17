@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react'
 import { Bebas_Neue } from 'next/font/google'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import UserProfile from '@/components/ui/user-profile'
 
 interface PastQuizzes {
     session_id: string
@@ -94,6 +95,11 @@ export default function QuizDashboard() {
 
             <main className='flex-1 p-6'>
                 <div className='mx-auto max-w-7xl'>
+                    {/* User Profile Section */}
+                    <div className='mb-8'>
+                        <UserProfile className='max-w-7xl mx-auto mb-8' />
+                    </div>
+
                     <div className='mb-8'>
                         {loading ? (
                             <div className='flex justify-center py-8'>
