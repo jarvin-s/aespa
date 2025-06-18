@@ -22,13 +22,12 @@ export interface XPCalculationResult {
 
 /**
  * Calculate XP earned based on quiz score
- * XP is calculated in increments of 2000 based on score
+ * XP is calculated in increments of 500 based on score
  * @param score - Final quiz score
  * @returns XP earned
  */
 export function calculateXPFromScore(score: number): number {
-    // Every 2000 points in score equals 1 XP
-    return Math.floor(score / 2000)
+    return Math.floor(score / 500)
 }
 
 /**
@@ -37,16 +36,16 @@ export function calculateXPFromScore(score: number): number {
  * Level 2: 100 XP (100 XP needed)
  * Level 3: 300 XP (200 XP more needed, total 300 XP from level 2)
  * Level 4: 600 XP (300 XP more needed, total 600 XP from level 3)
- * Pattern: Each level requires (level * 200) more XP than the previous level
+ * Pattern: Each level requires (level * 50) more XP than the previous level
  * @param level - Target level
  * @returns Total XP required to reach that level
  */
 export function getXPRequiredForLevel(level: number): number {
     if (level <= 1) return 0
-    
+
     let totalXP = 0
     for (let i = 2; i <= level; i++) {
-        totalXP += (i - 1) * 100
+        totalXP += (i - 1) * 50
     }
     return totalXP
 }
@@ -59,7 +58,7 @@ export function getXPRequiredForLevel(level: number): number {
 export function getLevelFromXP(totalXP: number): number {
     let level = 1
     let requiredXP = 0
-    
+
     while (requiredXP <= totalXP) {
         level++
         const nextLevelXP = getXPRequiredForLevel(level)
@@ -68,7 +67,7 @@ export function getLevelFromXP(totalXP: number): number {
         }
         requiredXP = nextLevelXP
     }
-    
+
     return level
 }
 
@@ -122,8 +121,8 @@ export function getLevelProgressInfo(level: number, totalXP: number) {
     const nextLevelXP = getXPRequiredForLevel(level + 1)
     const xpInCurrentLevel = totalXP - currentLevelXP
     const xpNeededForCurrentLevel = nextLevelXP - currentLevelXP
-    const progressPercentage = xpNeededForCurrentLevel > 0 
-        ? (xpInCurrentLevel / xpNeededForCurrentLevel) * 100 
+    const progressPercentage = xpNeededForCurrentLevel > 0
+        ? (xpInCurrentLevel / xpNeededForCurrentLevel) * 100
         : 100
 
     return {

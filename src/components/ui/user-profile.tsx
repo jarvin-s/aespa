@@ -11,9 +11,9 @@ interface UserProfileProps {
     className?: string
 }
 
-const UserProfile: React.FC<UserProfileProps> = ({ 
-    showCompact = false, 
-    className = '' 
+const UserProfile: React.FC<UserProfileProps> = ({
+    showCompact = false,
+    className = '',
 }) => {
     const { user } = useUser()
     const [userAccount, setUserAccount] = useState<UserAccount | null>(null)
@@ -44,9 +44,11 @@ const UserProfile: React.FC<UserProfileProps> = ({
 
     if (!user || loading) {
         return showCompact ? (
-            <div className={`animate-pulse bg-purple-800/30 rounded-lg p-3 ${className}`}>
-                <div className="h-4 bg-purple-600/50 rounded w-24 mb-2"></div>
-                <div className="h-2 bg-purple-600/50 rounded w-16"></div>
+            <div
+                className={`animate-pulse rounded-lg bg-purple-800/30 p-3 ${className}`}
+            >
+                <div className='mb-2 h-4 w-24 rounded bg-purple-600/50'></div>
+                <div className='h-2 w-16 rounded bg-purple-600/50'></div>
             </div>
         ) : null
     }
@@ -55,32 +57,37 @@ const UserProfile: React.FC<UserProfileProps> = ({
         return null
     }
 
-    const progressInfo = getLevelProgressInfo(userAccount.current_level, userAccount.total_xp)
+    const progressInfo = getLevelProgressInfo(
+        userAccount.current_level,
+        userAccount.total_xp
+    )
 
     if (showCompact) {
         return (
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className={`bg-purple-900/30 backdrop-blur-sm rounded-lg p-3 ${className}`}
+                className={`rounded-lg bg-purple-900/30 p-3 backdrop-blur-sm ${className}`}
             >
-                <div className="flex items-center justify-between">
+                <div className='flex items-center justify-between'>
                     <div>
-                        <div className="text-sm font-bold text-purple-200">
+                        <div className='text-sm font-bold text-purple-200'>
                             Level {userAccount.current_level}
                         </div>
-                        <div className="text-xs text-purple-300">
+                        <div className='text-xs text-purple-300'>
                             {userAccount.total_xp} XP
                         </div>
                     </div>
-                    <div className="text-right">
-                        <div className="text-xs text-purple-300">
+                    <div className='text-right'>
+                        <div className='text-xs text-purple-300'>
                             {progressInfo.xpToNextLevel} to next
                         </div>
-                        <div className="w-16 bg-purple-800/50 rounded-full h-1.5 mt-1">
-                            <div 
-                                className="bg-gradient-to-r from-purple-400 to-purple-600 h-1.5 rounded-full transition-all duration-300"
-                                style={{ width: `${progressInfo.progressPercentage}%` }}
+                        <div className='mt-1 h-1.5 w-16 rounded-full bg-purple-800/50'>
+                            <div
+                                className='h-1.5 rounded-full bg-gradient-to-r from-purple-400 to-purple-600 transition-all duration-300'
+                                style={{
+                                    width: `${progressInfo.progressPercentage}%`,
+                                }}
                             />
                         </div>
                     </div>
@@ -93,59 +100,64 @@ const UserProfile: React.FC<UserProfileProps> = ({
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`bg-purple-900/30 backdrop-blur-sm rounded-lg p-6 ${className}`}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className={`rounded-lg bg-purple-900/30 p-6 backdrop-blur-sm ${className}`}
         >
-            <div className="flex items-center justify-between mb-4">
+            <div className='mb-4 flex items-center justify-between'>
                 <div>
-                    <h3 className="text-xl font-bold text-white mb-1">
+                    <h3 className='mb-1 text-xl font-bold text-white'>
                         {userAccount.username}
                     </h3>
-                    <div className="text-sm text-purple-300">
+                    <div className='text-sm text-purple-300'>
                         {userAccount.total_quizzes_completed} quizzes completed
                     </div>
                 </div>
-                <div className="text-right">
-                    <div className="text-3xl font-bold text-purple-400">
+                <div className='text-right'>
+                    <div className='text-3xl font-bold text-purple-400'>
                         {userAccount.current_level}
                     </div>
-                    <div className="text-sm text-purple-300">Level</div>
+                    <div className='text-sm text-purple-300'>Level</div>
                 </div>
             </div>
 
-            <div className="mb-4">
-                <div className="flex justify-between text-sm text-purple-200 mb-2">
+            <div className='mb-4'>
+                <div className='mb-2 flex justify-between text-sm text-purple-200'>
                     <span>XP progress</span>
-                    <span>{userAccount.total_xp} / {progressInfo.nextLevelXP} XP</span>
+                    <span>
+                        {userAccount.total_xp} / {progressInfo.nextLevelXP} XP
+                    </span>
                 </div>
-                <div className="w-full bg-purple-800/50 rounded-full h-3">
+                <div className='h-3 w-full rounded-full bg-purple-800/50'>
                     <motion.div
-                        className="bg-gradient-to-r from-purple-400 to-purple-600 h-3 rounded-full"
+                        className='h-3 rounded-full bg-gradient-to-r from-purple-400 to-purple-600'
                         initial={{ width: 0 }}
-                        animate={{ width: `${progressInfo.progressPercentage}%` }}
+                        animate={{
+                            width: `${progressInfo.progressPercentage}%`,
+                        }}
                         transition={{ duration: 1 }}
                     />
                 </div>
-                <div className="text-xs text-purple-300 mt-1">
+                <div className='mt-1 text-xs text-purple-300'>
                     {progressInfo.xpToNextLevel} XP to next level
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 text-center">
-                <div className="bg-purple-800/30 rounded-lg p-3">
-                    <div className="text-lg font-bold text-purple-400">
+            <div className='grid grid-cols-2 gap-4 text-center'>
+                <div className='rounded-lg bg-purple-800/30 p-3'>
+                    <div className='text-lg font-bold text-purple-400'>
                         {userAccount.total_score.toLocaleString()}
                     </div>
-                    <div className="text-xs text-purple-300">Total score</div>
+                    <div className='text-xs text-purple-300'>Total score</div>
                 </div>
-                <div className="bg-purple-800/30 rounded-lg p-3">
-                    <div className="text-lg font-bold text-purple-400">
+                <div className='rounded-lg bg-purple-800/30 p-3'>
+                    <div className='text-lg font-bold text-purple-400'>
                         {userAccount.total_xp}
                     </div>
-                    <div className="text-xs text-purple-300">Total XP</div>
+                    <div className='text-xs text-purple-300'>Total XP</div>
                 </div>
             </div>
         </motion.div>
     )
 }
 
-export default UserProfile 
+export default UserProfile

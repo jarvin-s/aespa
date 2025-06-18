@@ -11,7 +11,7 @@ export async function GET() {
         }
 
         const supabase = await createClient()
-        
+
         const { data: userAccount, error } = await supabase
             .from('user_accounts')
             .select('*')
@@ -56,6 +56,57 @@ export async function GET() {
             { error: 'Internal server error' },
             { status: 500 }
         )
+    }
+}
+
+async function checkAndAwardBadges(userId: string, currentLevel: number) {
+    try {
+        const supabase = await createClient()
+
+        const { data: eligibleBadges, error: badgesError } = await supabase
+            .from('badges')
+            .select('*')
+            .gte('level_required', currentLevel)
+
+        if (badgesError) {
+            console.error('Error fetching eligible badges:', badgesError)
+            return
+        }
+
+        if (!eligibleBadges || eligibleBadges.length === 0) {
+            return
+        }
+
+        const { data: userBadges, error: userBadgesError } = await supabase
+            .from('user_badges')
+            .select('badge_id')
+            .eq('user_id', userId)
+
+        if (userBadgesError) {
+            console.error('Error fetching user badges:', userBadgesError)
+            return
+        }
+
+        const userBadgeIds = userBadges?.map((ub: { badge_id: number }) => ub.badge_id) || []
+
+        const newBadges = eligibleBadges.filter((badge: { id: number }) => !userBadgeIds.includes(badge.id))
+
+        if (newBadges.length > 0) {
+            const { error: insertError } = await supabase
+                .from('user_badges')
+                .insert(
+                    newBadges.map((badge: { id: number }) => ({
+                        user_id: userId,
+                        badge_id: badge.id
+                    }))
+                )
+
+            if (insertError) {
+                console.error('Error awarding badges:', insertError)
+            }
+        }
+    } catch (error) {
+        console.error('Error in checkAndAwardBadges:', error)
     }
 }
 
@@ -115,8 +166,30 @@ export async function PUT(request: NextRequest) {
             return NextResponse.json({ error: updateError.message }, { status: 500 })
         }
 
+        if (progression.newLevel > currentAccount.current_level) {
+            await checkAndAwardBadges(userId, progression.newLevel)
+        }
+
+        const { data: userBadges } = await supabase
+            .from('user_badges')
+            .select(`
+                badge_id,
+                badges (
+                    id,
+                    title,
+                    description,
+                    image
+                )
+            `)
+            .eq('user_id', userId)
+
+        const badges = userBadges?.map(ub => ub.badges) || []
+
         return NextResponse.json({
-            userAccount: updatedAccount,
+            userAccount: {
+                ...updatedAccount,
+                badges
+            },
             progression: {
                 xpEarned: progression.xpEarned,
                 levelUp: progression.levelUp,

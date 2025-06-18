@@ -162,7 +162,6 @@ export async function PUT(request: Request) {
         }
 
         if (userId && completed && !existingSession.completed) {
-            console.log('Quiz completed by authenticated user, updating leaderboard and XP')
             try {
                 await updateLeaderboardAsync(userId)
                 

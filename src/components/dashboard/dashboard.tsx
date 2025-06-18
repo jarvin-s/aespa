@@ -10,6 +10,7 @@ import { Bebas_Neue } from 'next/font/google'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import UserProfile from '@/components/ui/user-profile'
+import { motion } from 'motion/react'
 
 interface PastQuizzes {
     session_id: string
@@ -80,7 +81,12 @@ export default function QuizDashboard() {
 
     return (
         <div className='quiz-creation flex min-h-screen flex-col'>
-            <header className='relative flex w-full justify-center px-6 py-4 text-white'>
+            <motion.header
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className='relative flex w-full justify-center px-6 py-4 text-white'
+            >
                 <div className='absolute top-10 left-4 md:top-14 md:left-8'>
                     <Link href='/quiz'>
                         <ArrowLeft />
@@ -91,13 +97,13 @@ export default function QuizDashboard() {
                 >
                     Dashboard
                 </h1>
-            </header>
+            </motion.header>
 
             <main className='flex-1 p-6'>
                 <div className='mx-auto max-w-7xl'>
                     {/* User Profile Section */}
                     <div className='mb-8'>
-                        <UserProfile className='max-w-7xl mx-auto mb-8' />
+                        <UserProfile className='mx-auto mb-8 max-w-7xl' />
                     </div>
 
                     <div className='mb-8'>
@@ -106,145 +112,151 @@ export default function QuizDashboard() {
                                 <div className='h-6 w-6 animate-spin rounded-full border-2 border-purple-500 border-t-transparent'></div>
                             </div>
                         ) : completedQuizzes.length > 0 ? (
-                            <Card className='overflow-hidden bg-white'>
-                                <CardHeader>
-                                    <CardTitle className='text-2xl text-black'>
-                                        Quiz history
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className='p-0'>
-                                    <div className='overflow-x-auto'>
-                                        <div className='max-h-[400px] overflow-y-auto'>
-                                            <table className='w-full'>
-                                                <thead className='sticky top-0 bg-gray-50'>
-                                                    <tr className='border-b border-gray-200'>
-                                                        <th className='px-6 py-4 text-left text-sm font-medium text-gray-600'>
-                                                            Quiz
-                                                        </th>
-                                                        <th className='px-6 py-4 text-left text-sm font-medium text-gray-600'>
-                                                            Date
-                                                        </th>
-                                                        <th className='px-6 py-4 text-left text-sm font-medium text-gray-600'>
-                                                            Score
-                                                        </th>
-                                                        <th className='px-6 py-4 text-center text-sm font-medium text-gray-600'>
-                                                            Completed
-                                                        </th>
-                                                        <th className='px-6 py-4 text-center text-sm font-medium text-gray-600'>
-                                                            Actions
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody className='divide-y divide-gray-200'>
-                                                    {completedQuizzes.map(
-                                                        (quiz, index) => {
-                                                            const percentage =
-                                                                quiz.completed
-                                                                    ? getScorePercentage(
-                                                                          quiz.score,
-                                                                          quiz
-                                                                              .questions
-                                                                              .length
-                                                                      )
-                                                                    : 0
-                                                            return (
-                                                                <tr
-                                                                    key={`${quiz.session_id}-${index}`}
-                                                                    className='transition-colors hover:bg-gray-50'
-                                                                >
-                                                                    <td className='px-6 py-4'>
-                                                                        <div className='whitespace-nowrap text-gray-900'>
-                                                                            Quiz{' '}
-                                                                            {completedQuizzes.length -
-                                                                                index}
-                                                                        </div>
-                                                                    </td>
-                                                                    <td className='px-6 py-4 whitespace-nowrap text-gray-900'>
-                                                                        {formatDate(
-                                                                            quiz.created_at
-                                                                        )}
-                                                                    </td>
-                                                                    <td className='px-6 py-4'>
-                                                                        {quiz.completed ? (
-                                                                            <div className='flex items-center gap-2'>
-                                                                                <span
-                                                                                    className={`font-bold ${getScoreColor(percentage)}`}
-                                                                                >
-                                                                                    {
-                                                                                        quiz.score
-                                                                                    }
-                                                                                </span>
-                                                                                <Badge
-                                                                                    variant='outline'
-                                                                                    className={`${getScoreColor(percentage)} border-current`}
-                                                                                >
-                                                                                    {
-                                                                                        percentage
-                                                                                    }
-
-                                                                                    %
-                                                                                </Badge>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 1, duration: 0.5 }}
+                            >
+                                <Card className='overflow-hidden bg-white'>
+                                    <CardHeader>
+                                        <CardTitle className='text-2xl text-black'>
+                                            Quiz history
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className='p-0'>
+                                        <div className='overflow-x-auto'>
+                                            <div className='max-h-[400px] overflow-y-auto'>
+                                                <table className='w-full'>
+                                                    <thead className='sticky top-0 bg-gray-50'>
+                                                        <tr className='border-b border-gray-200'>
+                                                            <th className='px-6 py-4 text-left text-sm font-medium text-gray-600'>
+                                                                Quiz
+                                                            </th>
+                                                            <th className='px-6 py-4 text-left text-sm font-medium text-gray-600'>
+                                                                Date
+                                                            </th>
+                                                            <th className='px-6 py-4 text-left text-sm font-medium text-gray-600'>
+                                                                Score
+                                                            </th>
+                                                            <th className='px-6 py-4 text-center text-sm font-medium text-gray-600'>
+                                                                Completed
+                                                            </th>
+                                                            <th className='px-6 py-4 text-center text-sm font-medium text-gray-600'>
+                                                                Actions
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className='divide-y divide-gray-200'>
+                                                        {completedQuizzes.map(
+                                                            (quiz, index) => {
+                                                                const percentage =
+                                                                    quiz.completed
+                                                                        ? getScorePercentage(
+                                                                              quiz.score,
+                                                                              quiz
+                                                                                  .questions
+                                                                                  .length
+                                                                          )
+                                                                        : 0
+                                                                return (
+                                                                    <tr
+                                                                        key={`${quiz.session_id}-${index}`}
+                                                                        className='transition-colors hover:bg-gray-50'
+                                                                    >
+                                                                        <td className='px-6 py-4'>
+                                                                            <div className='whitespace-nowrap text-gray-900'>
+                                                                                Quiz{' '}
+                                                                                {completedQuizzes.length -
+                                                                                    index}
                                                                             </div>
-                                                                        ) : (
-                                                                            <span className=''>
-                                                                                In
-                                                                                progress
-                                                                            </span>
-                                                                        )}
-                                                                    </td>
-                                                                    <td className='px-6 py-4 text-center'>
-                                                                        {quiz.completed ? (
-                                                                            <div className='flex justify-center'>
-                                                                                <div className='rounded-full bg-green-100 p-1'>
-                                                                                    <Check className='h-4 w-4 text-green-600' />
-                                                                                </div>
-                                                                            </div>
-                                                                        ) : (
-                                                                            <div className='flex justify-center'>
-                                                                                <div className='rounded-full bg-red-100 p-1'>
-                                                                                    <X className='h-4 w-4 text-red-600' />
-                                                                                </div>
-                                                                            </div>
-                                                                        )}
-                                                                    </td>
-                                                                    <td className='px-6 py-4'>
-                                                                        <div className='flex justify-center gap-2'>
-                                                                            {quiz.completed ? (
-                                                                                <Link
-                                                                                    href={`/quiz/summary/${quiz.session_id}`}
-                                                                                >
-                                                                                    <Button
-                                                                                        size='sm'
-                                                                                        variant='outline'
-                                                                                        className='rounded-full bg-purple-700 text-white hover:bg-purple-800'
-                                                                                    >
-                                                                                        Summary
-                                                                                    </Button>
-                                                                                </Link>
-                                                                            ) : (
-                                                                                <Link
-                                                                                    href={`/quiz/${quiz.session_id}`}
-                                                                                >
-                                                                                    <Button
-                                                                                        size='sm'
-                                                                                        className='rounded-full bg-purple-700 text-white hover:bg-purple-800'
-                                                                                    >
-                                                                                        Continue
-                                                                                    </Button>
-                                                                                </Link>
+                                                                        </td>
+                                                                        <td className='px-6 py-4 whitespace-nowrap text-gray-900'>
+                                                                            {formatDate(
+                                                                                quiz.created_at
                                                                             )}
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                            )
-                                                        }
-                                                    )}
-                                                </tbody>
-                                            </table>
+                                                                        </td>
+                                                                        <td className='px-6 py-4'>
+                                                                            {quiz.completed ? (
+                                                                                <div className='flex items-center gap-2'>
+                                                                                    <span
+                                                                                        className={`font-bold ${getScoreColor(percentage)}`}
+                                                                                    >
+                                                                                        {
+                                                                                            quiz.score
+                                                                                        }
+                                                                                    </span>
+                                                                                    <Badge
+                                                                                        variant='outline'
+                                                                                        className={`${getScoreColor(percentage)} border-current`}
+                                                                                    >
+                                                                                        {
+                                                                                            percentage
+                                                                                        }
+
+                                                                                        %
+                                                                                    </Badge>
+                                                                                </div>
+                                                                            ) : (
+                                                                                <span className=''>
+                                                                                    In
+                                                                                    progress
+                                                                                </span>
+                                                                            )}
+                                                                        </td>
+                                                                        <td className='px-6 py-4 text-center'>
+                                                                            {quiz.completed ? (
+                                                                                <div className='flex justify-center'>
+                                                                                    <div className='rounded-full bg-green-100 p-1'>
+                                                                                        <Check className='h-4 w-4 text-green-600' />
+                                                                                    </div>
+                                                                                </div>
+                                                                            ) : (
+                                                                                <div className='flex justify-center'>
+                                                                                    <div className='rounded-full bg-red-100 p-1'>
+                                                                                        <X className='h-4 w-4 text-red-600' />
+                                                                                    </div>
+                                                                                </div>
+                                                                            )}
+                                                                        </td>
+                                                                        <td className='px-6 py-4'>
+                                                                            <div className='flex justify-center gap-2'>
+                                                                                {quiz.completed ? (
+                                                                                    <Link
+                                                                                        href={`/quiz/summary/${quiz.session_id}`}
+                                                                                    >
+                                                                                        <Button
+                                                                                            size='sm'
+                                                                                            variant='outline'
+                                                                                            className='rounded-full bg-purple-700 text-white hover:bg-purple-800'
+                                                                                        >
+                                                                                            Summary
+                                                                                        </Button>
+                                                                                    </Link>
+                                                                                ) : (
+                                                                                    <Link
+                                                                                        href={`/quiz/${quiz.session_id}`}
+                                                                                    >
+                                                                                        <Button
+                                                                                            size='sm'
+                                                                                            className='rounded-full bg-purple-700 text-white hover:bg-purple-800'
+                                                                                        >
+                                                                                            Continue
+                                                                                        </Button>
+                                                                                    </Link>
+                                                                                )}
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                )
+                                                            }
+                                                        )}
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                                    </CardContent>
+                                </Card>
+                            </motion.div>
                         ) : (
                             <div className='rounded-md border border-purple-100 bg-purple-50 py-12 text-center'>
                                 <p className='text-gray-600'>
@@ -261,7 +273,12 @@ export default function QuizDashboard() {
                         )}
                     </div>
 
-                    <div className='max-w-7xl'>
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 1.25, duration: 0.5 }}
+                        className='max-w-7xl'
+                    >
                         <div className='rounded-md bg-gradient-to-br from-purple-400 to-purple-800 p-6 text-white shadow-lg'>
                             <h3 className='mb-4 text-xl font-bold'>
                                 Quick links
@@ -287,7 +304,7 @@ export default function QuizDashboard() {
                                 </Link>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             </main>
         </div>

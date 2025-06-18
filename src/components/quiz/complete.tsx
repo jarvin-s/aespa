@@ -13,7 +13,6 @@ interface QuizCompleteProps {
 
 interface UserProgress {
     xpEarned: number
-    levelUp: boolean
     newLevel: number
     previousLevel: number
     currentXP: number
@@ -33,32 +32,54 @@ const QuizComplete = ({ score }: QuizCompleteProps) => {
                 return
             }
 
-            try {
-                const response = await fetch('/api/user-account')
-                if (response.ok) {
-                    const data = await response.json()
-                    const userAccount = data.userAccount
-                    
-                    if (userAccount) {
-                        const xpEarned = calculateXPFromScore(score)
-                        const progressInfo = getLevelProgressInfo(userAccount.current_level, userAccount.total_xp)
-                        
-                        setUserProgress({
-                            xpEarned,
-                            levelUp: false,
-                            newLevel: userAccount.current_level,
-                            previousLevel: userAccount.current_level,
-                            currentXP: userAccount.total_xp,
-                            xpToNextLevel: userAccount.xp_to_next_level,
-                            progressPercentage: progressInfo.progressPercentage
-                        })
+            const expectedXPEarned = calculateXPFromScore(score)
+
+            await new Promise((resolve) => setTimeout(resolve, 1000))
+
+            let retryCount = 0
+            const maxRetries = 3
+
+            while (retryCount < maxRetries) {
+                try {
+                    const response = await fetch('/api/user-account')
+                    if (response.ok) {
+                        const data = await response.json()
+                        const userAccount = data.userAccount
+
+                        if (userAccount) {
+                            const progressInfo = getLevelProgressInfo(
+                                userAccount.current_level,
+                                userAccount.total_xp
+                            )
+
+                            const previousXP =
+                                userAccount.total_xp - expectedXPEarned
+                            const previousLevel =
+                                userAccount.current_level -
+                                (userAccount.total_xp > previousXP ? 1 : 0)
+
+                            setUserProgress({
+                                xpEarned: expectedXPEarned,
+                                newLevel: userAccount.current_level,
+                                previousLevel: previousLevel,
+                                currentXP: userAccount.total_xp,
+                                xpToNextLevel: userAccount.xp_to_next_level,
+                                progressPercentage:
+                                    progressInfo.progressPercentage,
+                            })
+                            break
+                        }
                     }
+                } catch (error) {
+                    console.error('Error fetching user progress:', error)
                 }
-            } catch (error) {
-                console.error('Error fetching user progress:', error)
-            } finally {
-                setLoading(false)
+
+                retryCount++
+                if (retryCount < maxRetries) {
+                    await new Promise((resolve) => setTimeout(resolve, 1000))
+                }
             }
+            setLoading(false)
         }
 
         fetchUserProgress()
@@ -107,54 +128,40 @@ const QuizComplete = ({ score }: QuizCompleteProps) => {
                                     transition={{ duration: 0.5, delay: 1 }}
                                     className='mb-6 w-full max-w-md'
                                 >
-                                    <div className='rounded-lg bg-purple-900/30 p-6 backdrop-blur-sm'>
-                                        <div className='text-center mb-4'>
-                                            <h3 className='text-2xl font-bold text-purple-300 mb-2'>
-                                                XP Earned
+                                    <div className='p-6'>
+                                        <div className='flex justify-between text-center'>
+                                            <h3 className='mb-2 text-4xl font-bold'>
+                                                XP earned
                                             </h3>
                                             <div className='text-4xl font-bold text-yellow-400'>
                                                 +{userProgress.xpEarned} XP
                                             </div>
-                                            <div className='text-sm text-purple-200 mt-1'>
-                                                ({score} points ÷ 2000 = {userProgress.xpEarned} XP)
-                                            </div>
                                         </div>
 
                                         <div className='text-center'>
-                                            <div className='text-lg font-semibold text-purple-200 mb-2'>
-                                                Level {userProgress.newLevel}
-                                            </div>
-                                            
                                             {/* XP Progress Bar */}
-                                            <div className='w-full bg-purple-800/50 rounded-full h-3 mb-2'>
+                                            <div className='mb-2 h-3 w-full rounded-full bg-purple-800/50'>
                                                 <motion.div
-                                                    className='bg-gradient-to-r from-purple-400 to-purple-600 h-3 rounded-full'
+                                                    className='h-3 rounded-full bg-gradient-to-r from-purple-400 to-purple-600'
                                                     initial={{ width: 0 }}
-                                                    animate={{ width: `${userProgress.progressPercentage}%` }}
-                                                    transition={{ duration: 1, delay: 1.5 }}
+                                                    animate={{
+                                                        width: `${userProgress.progressPercentage}%`,
+                                                    }}
+                                                    transition={{
+                                                        duration: 1,
+                                                        delay: 1.5,
+                                                    }}
                                                 />
                                             </div>
-                                            
-                                            <div className='text-sm text-purple-200'>
-                                                {userProgress.xpToNextLevel} XP to next level
+
+                                            <div className='mb-2 text-xl'>
+                                                Level {userProgress.newLevel}
+                                            </div>
+                                            <div className='text-lg text-purple-200'>
+                                                {userProgress.xpToNextLevel} XP
+                                                to next level
                                             </div>
                                         </div>
-
-                                        {userProgress.levelUp && (
-                                            <motion.div
-                                                initial={{ opacity: 0, scale: 0.8 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                transition={{ duration: 0.5, delay: 2 }}
-                                                className='mt-4 text-center'
-                                            >
-                                                <div className='text-2xl font-bold text-yellow-400'>
-                                                    🎉 LEVEL UP! 🎉
-                                                </div>
-                                                <div className='text-lg text-purple-200'>
-                                                    Level {userProgress.previousLevel} → Level {userProgress.newLevel}
-                                                </div>
-                                            </motion.div>
-                                        )}
                                     </div>
                                 </motion.div>
                             )}

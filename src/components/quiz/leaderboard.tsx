@@ -16,6 +16,15 @@ interface LeaderboardEntry {
     score: number
     quizzesTaken: number
     avatar: string
+    current_level: number
+    total_xp: number
+    total_quizzes_completed: number
+    badges: Array<{
+        id: number
+        title: string
+        description: string
+        image: string
+    }>
 }
 
 interface LeaderboardStats {
@@ -100,7 +109,9 @@ export default function Leaderboard() {
                 {/* Top 3 Players Cards */}
                 {leaderboardData.length > 0 && (
                     <div className='mb-8'>
-                        <h2 className='mb-6 text-center text-2xl font-bold text-purple-700'>
+                        <h2
+                            className={`${bebasNeue.className} mb-10 text-center text-5xl font-bold text-purple-500 md:text-6xl`}
+                        >
                             Top players
                         </h2>
                         <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
@@ -121,9 +132,44 @@ export default function Leaderboard() {
                                                 priority
                                             />
                                         </div>
-                                        <h3 className='mb-2 text-2xl font-bold text-yellow-700'>
-                                            {leaderboardData[0].username}
-                                        </h3>
+                                        <div className='flex items-center justify-center gap-2 mb-2'>
+                                            {leaderboardData[0].badges &&
+                                                leaderboardData[0].badges.length > 0 && (
+                                                    <div className='flex gap-1'>
+                                                        {leaderboardData[0].badges.map(
+                                                            (badge) => (
+                                                                <div
+                                                                    key={badge.id}
+                                                                    className='group relative'
+                                                                >
+                                                                    <Image
+                                                                        src={badge.image}
+                                                                        alt={badge.title}
+                                                                        width={24}
+                                                                        height={24}
+                                                                    />
+                                                                    <div className='absolute bottom-full left-1/2 mb-2 -translate-x-1/2 transform rounded bg-black px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity group-hover:opacity-100'>
+                                                                        {badge.title}
+                                                                    </div>
+                                                                </div>
+                                                            )
+                                                        )}
+                                                    </div>
+                                                )}
+                                            <h3 className='text-3xl font-bold text-yellow-700'>
+                                                {leaderboardData[0].username}
+                                            </h3>
+                                        </div>
+                                        <div className='flex justify-center gap-2'>
+                                            <p className='text-md text-yellow-700'>
+                                                Level{' '}
+                                                {leaderboardData[0].current_level}
+                                            </p>
+                                            <p className='text-md text-yellow-700'>
+                                                - ({leaderboardData[0].total_xp}
+                                                XP)
+                                            </p>
+                                        </div>
                                         <p className='text-4xl font-bold text-purple-600'>
                                             {leaderboardData[0].score.toLocaleString()}
                                         </p>
@@ -152,9 +198,22 @@ export default function Leaderboard() {
                                                 priority
                                             />
                                         </div>
-                                        <h3 className='mb-2 text-xl font-bold text-gray-700'>
+                                        <h3 className='mb-2 text-3xl font-bold text-gray-700'>
                                             {leaderboardData[1].username}
                                         </h3>
+                                        <div className='mb-2 flex justify-center gap-1'>
+                                            <p className='text-md text-gray-700'>
+                                                Level{' '}
+                                                {
+                                                    leaderboardData[1]
+                                                        .current_level
+                                                }
+                                            </p>
+                                            <p className='text-md text-gray-700'>
+                                                - ({leaderboardData[1].total_xp}{' '}
+                                                XP)
+                                            </p>
+                                        </div>
                                         <p className='text-3xl font-bold text-purple-600'>
                                             {leaderboardData[1].score.toLocaleString()}
                                         </p>
@@ -183,9 +242,22 @@ export default function Leaderboard() {
                                                 priority
                                             />
                                         </div>
-                                        <h3 className='mb-2 text-xl font-bold text-orange-700'>
+                                        <h3 className='mb-2 text-3xl font-bold text-orange-700'>
                                             {leaderboardData[2].username}
                                         </h3>
+                                        <div className='mb-2 flex justify-center gap-1'>
+                                            <p className='text-md text-orange-700'>
+                                                Level{' '}
+                                                {
+                                                    leaderboardData[2]
+                                                        .current_level
+                                                }
+                                            </p>
+                                            <p className='text-md text-orange-700'>
+                                                - ({leaderboardData[2].total_xp}{' '}
+                                                XP)
+                                            </p>
+                                        </div>
                                         <p className='text-3xl font-bold text-purple-600'>
                                             {leaderboardData[2].score.toLocaleString()}
                                         </p>
@@ -221,16 +293,19 @@ export default function Leaderboard() {
                                         Rank
                                     </th>
                                     <th className='px-6 py-3 text-left text-xs uppercase'>
+                                        Level
+                                    </th>
+                                    <th className='px-6 py-3 text-left text-xs uppercase'>
                                         Username
+                                    </th>
+                                    <th className='px-6 py-3 text-left text-xs uppercase'>
+                                        Badges
                                     </th>
                                     <th className='px-6 py-3 text-left text-xs uppercase'>
                                         Score
                                     </th>
                                     <th className='px-6 py-3 text-left text-xs uppercase'>
                                         Quizzes taken
-                                    </th>
-                                    <th className='px-6 py-3 text-left text-xs uppercase'>
-                                        Average score
                                     </th>
                                 </tr>
                             </thead>
@@ -257,6 +332,11 @@ export default function Leaderboard() {
                                             </td>
                                             <td className='px-6 py-4 whitespace-nowrap'>
                                                 <div className='flex items-center'>
+                                                    {entry.current_level}
+                                                </div>
+                                            </td>
+                                            <td className='px-6 py-4 whitespace-nowrap'>
+                                                <div className='flex items-center'>
                                                     {entry.username.toLowerCase()}
                                                     {isCurrentUser && (
                                                         <span className='ml-2 rounded-full bg-purple-700 px-2 py-1 text-xs text-white'>
@@ -266,18 +346,45 @@ export default function Leaderboard() {
                                                 </div>
                                             </td>
                                             <td className='px-6 py-4 whitespace-nowrap'>
+                                                <div className='flex items-center gap-2'>
+                                                    {entry.badges &&
+                                                        entry.badges.map(
+                                                            (badge) => (
+                                                                <div
+                                                                    key={
+                                                                        badge.id
+                                                                    }
+                                                                    className='group relative'
+                                                                >
+                                                                    <Image
+                                                                        src={
+                                                                            badge.image
+                                                                        }
+                                                                        alt={
+                                                                            badge.title
+                                                                        }
+                                                                        width={
+                                                                            24
+                                                                        }
+                                                                        height={
+                                                                            24
+                                                                        }
+                                                                    />
+                                                                    <div className='absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 transform rounded bg-black px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity group-hover:opacity-100'>
+                                                                        {
+                                                                            badge.title
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            )
+                                                        )}
+                                                </div>
+                                            </td>
+                                            <td className='px-6 py-4 whitespace-nowrap'>
                                                 {entry.score.toLocaleString()}
                                             </td>
                                             <td className='px-6 py-4 whitespace-nowrap'>
                                                 {entry.quizzesTaken}
-                                            </td>
-                                            <td className='px-6 py-4 whitespace-nowrap'>
-                                                {entry.quizzesTaken > 0
-                                                    ? (
-                                                          entry.score /
-                                                          entry.quizzesTaken
-                                                      ).toFixed(1)
-                                                    : '0.0'}
                                             </td>
                                         </tr>
                                     )
