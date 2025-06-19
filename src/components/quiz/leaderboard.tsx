@@ -115,7 +115,7 @@ export default function Leaderboard() {
                             Top players
                         </h2>
                         <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
-                            {/* First Place */}
+                            {/* First place */}
                             {leaderboardData[0] && (
                                 <div className='relative order-1 flex flex-col items-center md:order-2 md:col-start-2 md:-mt-4'>
                                     <div className='absolute -top-4 text-4xl'>
@@ -132,24 +132,37 @@ export default function Leaderboard() {
                                                 priority
                                             />
                                         </div>
-                                        <div className='flex items-center justify-center gap-2 mb-2'>
+                                        <div className='mb-2 flex items-center justify-center gap-2'>
                                             {leaderboardData[0].badges &&
-                                                leaderboardData[0].badges.length > 0 && (
+                                                leaderboardData[0].badges
+                                                    .length > 0 && (
                                                     <div className='flex gap-1'>
                                                         {leaderboardData[0].badges.map(
                                                             (badge) => (
                                                                 <div
-                                                                    key={badge.id}
+                                                                    key={
+                                                                        badge.id
+                                                                    }
                                                                     className='group relative'
                                                                 >
                                                                     <Image
-                                                                        src={badge.image}
-                                                                        alt={badge.title}
-                                                                        width={24}
-                                                                        height={24}
+                                                                        src={
+                                                                            badge.image
+                                                                        }
+                                                                        alt={
+                                                                            badge.title
+                                                                        }
+                                                                        width={
+                                                                            40
+                                                                        }
+                                                                        height={
+                                                                            40
+                                                                        }
                                                                     />
                                                                     <div className='absolute bottom-full left-1/2 mb-2 -translate-x-1/2 transform rounded bg-black px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity group-hover:opacity-100'>
-                                                                        {badge.title}
+                                                                        {
+                                                                            badge.title
+                                                                        }
                                                                     </div>
                                                                 </div>
                                                             )
@@ -163,7 +176,10 @@ export default function Leaderboard() {
                                         <div className='flex justify-center gap-2'>
                                             <p className='text-md text-yellow-700'>
                                                 Level{' '}
-                                                {leaderboardData[0].current_level}
+                                                {
+                                                    leaderboardData[0]
+                                                        .current_level
+                                                }
                                             </p>
                                             <p className='text-md text-yellow-700'>
                                                 - ({leaderboardData[0].total_xp}
@@ -181,7 +197,7 @@ export default function Leaderboard() {
                                 </div>
                             )}
 
-                            {/* Second Place */}
+                            {/* Second place */}
                             {leaderboardData[1] && (
                                 <div className='relative order-2 flex flex-col items-center md:order-1'>
                                     <div className='absolute -top-4 text-4xl'>
@@ -225,7 +241,7 @@ export default function Leaderboard() {
                                 </div>
                             )}
 
-                            {/* Third Place */}
+                            {/* Third place */}
                             {leaderboardData[2] && (
                                 <div className='relative order-3 flex flex-col items-center md:order-3'>
                                     <div className='absolute -top-4 text-4xl'>
@@ -364,10 +380,10 @@ export default function Leaderboard() {
                                                                             badge.title
                                                                         }
                                                                         width={
-                                                                            24
+                                                                            16
                                                                         }
                                                                         height={
-                                                                            24
+                                                                            16
                                                                         }
                                                                     />
                                                                     <div className='absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 transform rounded bg-black px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity group-hover:opacity-100'>
