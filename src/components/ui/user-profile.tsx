@@ -42,18 +42,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
         fetchUserAccount()
     }, [user])
 
-    if (!user || loading) {
-        return showCompact ? (
-            <div
-                className={`animate-pulse rounded-lg bg-purple-800/30 p-3 ${className}`}
-            >
-                <div className='mb-2 h-4 w-24 rounded bg-purple-600/50'></div>
-                <div className='h-2 w-16 rounded bg-purple-600/50'></div>
-            </div>
-        ) : null
-    }
-
-    if (!userAccount) {
+    if (!user || !userAccount || loading) {
         return null
     }
 

@@ -45,7 +45,7 @@ export default function CollectionView({
                                 photocard={photocard}
                                 isOwned={isOwned}
                                 isFavorited={isFavorited}
-                                size='medium'
+                                size='large'
                                 onClick={() => onCardClick?.(photocard)}
                                 onFavorite={() =>
                                     onFavoriteToggle?.(photocard.id)

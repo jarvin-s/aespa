@@ -46,7 +46,7 @@ export default function PhotocardDisplay({
 
     return (
         <motion.div
-            className={`relative ${sizeClasses['large']} cursor-pointer ${className}`}
+            className={`relative ${sizeClasses[size]} cursor-pointer ${className}`}
             onClick={onClick}
         >
             {/* Card Container */}
