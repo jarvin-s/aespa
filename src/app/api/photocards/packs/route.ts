@@ -149,11 +149,15 @@ async function openPack(
         // Get user's existing collection
         const { data: userCollection } = await supabase
             .from('user_photocards')
-            .select('photocard_id')
+            .select('photocard_id, quantity')
             .eq('user_id', userId)
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const ownedCardIds = new Set(userCollection?.map((uc: any) => uc.photocard_id) || [])
+        const ownedCards = new Map(
+            (userCollection || []).map((uc: { photocard_id: number; quantity: number }) => [
+                uc.photocard_id,
+                uc.quantity || 1,
+            ])
+        )
 
         for (let i = 0; i < pack.cards_per_pack; i++) {
             let selectedCard: Photocard | null = null
@@ -174,7 +178,7 @@ async function openPack(
             if (selectedCard) {
                 cardsToGive.push(selectedCard)
 
-                if (ownedCardIds.has(selectedCard.id)) {
+                if (ownedCards.has(selectedCard.id)) {
                     duplicates.push(selectedCard)
                 } else {
                     newCards.push(selectedCard)
@@ -182,6 +186,7 @@ async function openPack(
             }
         }
 
+        // Record the pack opening
         const { data: packOpening, error: openingError } = await supabase
             .from('pack_openings')
             .insert({
@@ -196,11 +201,13 @@ async function openPack(
             throw new Error(`Failed to record pack opening: ${openingError.message}`)
         }
 
+        // Handle new cards - insert them with quantity 1
         if (newCards.length > 0) {
             const cardsToInsert = newCards.map(card => ({
                 user_id: userId,
                 photocard_id: card.id,
-                obtained_method: 'pack_opening' as const
+                obtained_method: 'pack_opening' as const,
+                quantity: 1
             }))
 
             const { error: insertError } = await supabase
@@ -208,7 +215,23 @@ async function openPack(
                 .insert(cardsToInsert)
 
             if (insertError) {
-                console.error('Error adding cards to collection:', insertError)
+                console.error('Error adding new cards to collection:', insertError)
+            }
+        }
+
+        // Handle duplicates - update their quantities
+        if (duplicates.length > 0) {
+            for (const card of duplicates) {
+                const currentQuantity = Number(ownedCards.get(card.id)) || 1
+                const { error: updateError } = await supabase
+                    .from('user_photocards')
+                    .update({ quantity: currentQuantity + 1 })
+                    .eq('user_id', userId)
+                    .eq('photocard_id', card.id)
+
+                if (updateError) {
+                    console.error(`Error updating quantity for card ${card.id}:`, updateError)
+                }
             }
         }
 

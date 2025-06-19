@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { motion } from 'motion/react'
-import { Calendar, Filter, Search, Star, Trophy, User } from 'lucide-react'
+import { Filter, Search } from 'lucide-react'
 import PhotocardDisplay from './PhotocardDisplay'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -108,85 +108,6 @@ export default function CollectionView({
                     animate={{ opacity: 1, y: 0 }}
                     className='mb-8'
                 >
-                    <div className='mb-6 grid grid-cols-2 gap-4 md:grid-cols-4'>
-                        <Card className='col-span-1 border-none bg-gradient-to-br from-purple-500 to-purple-700 text-white sm:col-span-2 md:col-span-1'>
-                            <CardContent className='p-4 text-center'>
-                                <Trophy className='mx-auto mb-2' size={24} />
-                                <div className='mb-2 flex items-center justify-center gap-2 text-2xl font-bold'>
-                                    <div>{stats.total_owned}</div>
-                                    <span className='text-lg font-medium'>
-                                        Cards owned
-                                    </span>
-                                </div>
-                                <div className='text-sm opacity-90'>
-                                    {stats.completion_percentage}% Complete
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        <Card className='col-span-1 border-none bg-gradient-to-br from-purple-500 to-purple-700 text-white sm:col-span-2 md:col-span-1'>
-                            <CardContent className='p-4 text-center'>
-                                <Star className='mx-auto mb-2' size={24} />
-                                <div className='mb-2 flex items-center justify-center gap-2 text-2xl font-bold'>
-                                    <div>{stats.rarest_owned.length}</div>
-                                    <span className='text-lg font-medium'>
-                                        Rare collection
-                                    </span>
-                                </div>
-                                <div className='text-sm opacity-90'>
-                                    Epic+ cards
-                                </div>
-                                <div className='mt-1 text-xs'>
-                                    Rare collection
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        <Card className='col-span-1 border-none bg-gradient-to-br from-purple-500 to-purple-700 text-white sm:col-span-2 md:col-span-1'>
-                            <CardContent className='p-4 text-center'>
-                                <User className='mx-auto mb-2' size={24} />
-                                <div className='mb-2 flex items-center justify-center gap-2 text-2xl font-bold'>
-                                    <div>
-                                        {Object.values(stats.by_member).reduce(
-                                            (acc, member) =>
-                                                acc +
-                                                (member.owned > 0 ? 1 : 0),
-                                            0
-                                        )}
-                                    </div>
-                                    <span className='text-lg font-medium'>
-                                        Members
-                                    </span>
-                                </div>
-                                <div className='text-sm opacity-90'>
-                                    Members
-                                </div>
-                                <div className='mt-1 text-xs'>
-                                    Collections started
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        <Card className='col-span-1 border-none bg-gradient-to-br from-purple-500 to-purple-700 text-white sm:col-span-2 md:col-span-1'>
-                            <CardContent className='p-4 text-center'>
-                                <Calendar className='mx-auto mb-2' size={24} />
-                                <div className='mb-2 flex items-center justify-center gap-2 text-2xl font-bold'>
-                                    <div>
-                                        {Object.values(stats.by_era).reduce(
-                                            (acc, era) =>
-                                                acc + (era.owned > 0 ? 1 : 0),
-                                            0
-                                        )}
-                                    </div>
-                                    <span className='text-lg font-medium'>
-                                        Eras
-                                    </span>
-                                </div>
-                                <div className='mt-1 text-xs'>Represented</div>
-                            </CardContent>
-                        </Card>
-                    </div>
-
                     {/* Rarity Progress */}
                     <Card className='mb-6 bg-white'>
                         <CardHeader>

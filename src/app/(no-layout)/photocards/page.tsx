@@ -51,7 +51,7 @@ export default function PhotocardsPage() {
         try {
             const collectionResponse = await fetch(
                 '/api/photocards/collection?stats=true'
-            )
+        )
             if (collectionResponse.ok) {
                 const { collection: userCollection, stats } =
                     await collectionResponse.json()
