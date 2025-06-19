@@ -143,8 +143,8 @@ async function openPack(
 ): Promise<PackOpeningResult> {
     try {
         const cardsToGive: Photocard[] = []
-        const newCards: Photocard[] = []
-        const duplicates: Photocard[] = []
+        const newCards = new Map<number, { card: Photocard; quantity: number }>()
+        const duplicates = new Map<number, { card: Photocard; quantity: number }>()
 
         // Get user's existing collection
         const { data: userCollection } = await supabase
@@ -179,9 +179,19 @@ async function openPack(
                 cardsToGive.push(selectedCard)
 
                 if (ownedCards.has(selectedCard.id)) {
-                    duplicates.push(selectedCard)
+                    const existing = duplicates.get(selectedCard.id)
+                    if (existing) {
+                        existing.quantity++
+                    } else {
+                        duplicates.set(selectedCard.id, { card: selectedCard, quantity: 1 })
+                    }
                 } else {
-                    newCards.push(selectedCard)
+                    const existing = newCards.get(selectedCard.id)
+                    if (existing) {
+                        existing.quantity++
+                    } else {
+                        newCards.set(selectedCard.id, { card: selectedCard, quantity: 1 })
+                    }
                 }
             }
         }
@@ -201,13 +211,12 @@ async function openPack(
             throw new Error(`Failed to record pack opening: ${openingError.message}`)
         }
 
-        // Handle new cards - insert them with quantity 1
-        if (newCards.length > 0) {
-            const cardsToInsert = newCards.map(card => ({
+        if (newCards.size > 0) {
+            const cardsToInsert = Array.from(newCards.values()).map(({ card, quantity }) => ({
                 user_id: userId,
                 photocard_id: card.id,
                 obtained_method: 'pack_opening' as const,
-                quantity: 1
+                quantity: quantity
             }))
 
             const { error: insertError } = await supabase
@@ -219,19 +228,16 @@ async function openPack(
             }
         }
 
-        // Handle duplicates - update their quantities
-        if (duplicates.length > 0) {
-            for (const card of duplicates) {
-                const currentQuantity = Number(ownedCards.get(card.id)) || 1
-                const { error: updateError } = await supabase
-                    .from('user_photocards')
-                    .update({ quantity: currentQuantity + 1 })
-                    .eq('user_id', userId)
-                    .eq('photocard_id', card.id)
+        for (const { card, quantity } of duplicates.values()) {
+            const currentQuantity = Number(ownedCards.get(card.id)) || 1
+            const { error: updateError } = await supabase
+                .from('user_photocards')
+                .update({ quantity: currentQuantity + quantity })
+                .eq('user_id', userId)
+                .eq('photocard_id', card.id)
 
-                if (updateError) {
-                    console.error(`Error updating quantity for card ${card.id}:`, updateError)
-                }
+            if (updateError) {
+                console.error(`Error updating quantity for card ${card.id}:`, updateError)
             }
         }
 
@@ -239,8 +245,8 @@ async function openPack(
             success: true,
             pack,
             cards_obtained: cardsToGive,
-            new_cards: newCards,
-            duplicates,
+            new_cards: Array.from(newCards.values()).map(x => x.card),
+            duplicates: Array.from(duplicates.values()).map(x => x.card),
             opening_id: packOpening.id
         }
 

@@ -9,7 +9,6 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import CollectionView from '@/components/photocards/CollectionView'
 import PackOpening from '@/components/photocards/PackOpening'
-import { Card, CardContent } from '@/components/ui/card'
 import type {
     Photocard,
     UserPhotocard,
@@ -51,7 +50,7 @@ export default function PhotocardsPage() {
         try {
             const collectionResponse = await fetch(
                 '/api/photocards/collection?stats=true'
-        )
+            )
             if (collectionResponse.ok) {
                 const { collection: userCollection, stats } =
                     await collectionResponse.json()
@@ -179,14 +178,8 @@ export default function PhotocardsPage() {
                 className='relative flex w-full justify-center px-6 py-4 text-white'
             >
                 <div className='absolute top-10 left-4 md:top-14 md:left-8'>
-                    <Link href='/dashboard'>
-                        <Button
-                            variant='ghost'
-                            size='sm'
-                            className='text-white hover:bg-white/10'
-                        >
-                            <ArrowLeft size={16} />
-                        </Button>
+                    <Link href='/quiz'>
+                        <ArrowLeft />
                     </Link>
                 </div>
                 <h1
@@ -290,45 +283,6 @@ export default function PhotocardsPage() {
                     </motion.div>
                 )}
             </main>
-
-            {/* Quick stats footer */}
-            {!loading && collectionStats && activeTab === 'collection' && (
-                <motion.footer
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8 }}
-                    className='mt-8 px-6 pb-6'
-                >
-                    <Card className='mx-auto max-w-7xl border-2 border-purple-800 bg-white text-black'>
-                        <CardContent className='p-4'>
-                            <div className='flex items-center justify-around text-center'>
-                                <div>
-                                    <div className='text-lg font-bold'>
-                                        {collectionStats.total_owned}/
-                                        {collectionStats.total_cards}
-                                    </div>
-                                    <div className='text-xs'>Total cards</div>
-                                </div>
-                                <div>
-                                    <div className='text-lg font-bold'>
-                                        {collectionStats.completion_percentage.toFixed(
-                                            1
-                                        )}
-                                        %
-                                    </div>
-                                    <div className='text-xs'>Complete</div>
-                                </div>
-                                <div>
-                                    <div className='text-lg font-bold'>
-                                        {collectionStats.rarest_owned.length}
-                                    </div>
-                                    <div className='text-xs'>Rare cards</div>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </motion.footer>
-            )}
         </div>
     )
 }
