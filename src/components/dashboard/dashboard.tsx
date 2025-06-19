@@ -291,6 +291,12 @@ export default function QuizDashboard() {
                                     Take a new quiz
                                 </Link>
                                 <Link
+                                    href='/photocards'
+                                    className='block rounded-md bg-white/10 p-4 transition-all hover:bg-white/20'
+                                >
+                                    View photocard collection
+                                </Link>
+                                <Link
                                     href='/leaderboard'
                                     className='block rounded-md bg-white/10 p-4 transition-all hover:bg-white/20'
                                 >

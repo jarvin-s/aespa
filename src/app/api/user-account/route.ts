@@ -110,6 +110,95 @@ async function checkAndAwardBadges(userId: string, currentLevel: number) {
     }
 }
 
+async function awardLevelMilestonePack(userId: string, level: number) {
+    try {
+        const supabase = await createClient()
+
+        let packId = 2 // Level up pack by default
+        if (level >= 25) {
+            packId = 5 // Legendary pack
+        } else if (level >= 15) {
+            packId = 4 // Elite pack
+        } else if (level >= 10) {
+            packId = 3 // Premium pack
+        }
+
+        const { data: availableCards } = await supabase
+            .from('photocards')
+            .select('*')
+            .lte('level_required', level)
+
+        if (!availableCards || availableCards.length === 0) {
+            return
+        }
+
+        const cardsToAward: number[] = []
+        const guaranteedRarities = level >= 25 ? ['epic', 'legendary'] : level >= 15 ? ['rare', 'epic'] : level >= 10 ? ['uncommon', 'rare'] : ['uncommon']
+        
+        for (let i = 0; i < 3; i++) {
+            let selectedCard
+            if (i === 0) {
+                const eligibleCards = availableCards.filter(card => 
+                    guaranteedRarities.includes(card.rarity)
+                )
+                selectedCard = eligibleCards[Math.floor(Math.random() * eligibleCards.length)]
+            } else {
+                const weights = availableCards.map(card => card.drop_weight || 100)
+                const totalWeight = weights.reduce((sum, weight) => sum + weight, 0)
+                let random = Math.random() * totalWeight
+                
+                for (let j = 0; j < availableCards.length; j++) {
+                    random -= weights[j]
+                    if (random <= 0) {
+                        selectedCard = availableCards[j]
+                        break
+                    }
+                }
+            }
+            
+            if (selectedCard) {
+                cardsToAward.push(selectedCard.id)
+            }
+        }
+
+        await supabase
+            .from('pack_openings')
+            .insert({
+                user_id: userId,
+                pack_id: packId,
+                cards_obtained: cardsToAward
+            })
+            .select()
+            .single()
+
+        const { data: existingCards } = await supabase
+            .from('user_photocards')
+            .select('photocard_id')
+            .eq('user_id', userId)
+            .in('photocard_id', cardsToAward)
+
+        const existingCardIds = new Set(existingCards?.map(ec => ec.photocard_id) || [])
+        const newCards = cardsToAward.filter(cardId => !existingCardIds.has(cardId))
+
+        if (newCards.length > 0) {
+            const cardsToInsert = newCards.map(cardId => ({
+                user_id: userId,
+                photocard_id: cardId,
+                obtained_method: 'level_reward' as const
+            }))
+
+            await supabase
+                .from('user_photocards')
+                .insert(cardsToInsert)
+        }
+
+        console.log(`Awarded level ${level} milestone pack to user ${userId}: ${cardsToAward.length} cards (${newCards.length} new)`)
+        
+    } catch (error) {
+        console.error('Error awarding level milestone pack:', error)
+    }
+}
+
 export async function PUT(request: NextRequest) {
     try {
         const { userId } = await auth()
@@ -168,6 +257,11 @@ export async function PUT(request: NextRequest) {
 
         if (progression.newLevel > currentAccount.current_level) {
             await checkAndAwardBadges(userId, progression.newLevel)
+            
+            // Award photocard pack for level milestones
+            if (progression.newLevel % 5 === 0) {
+                await awardLevelMilestonePack(userId, progression.newLevel)
+            }
         }
 
         const { data: userBadges } = await supabase
