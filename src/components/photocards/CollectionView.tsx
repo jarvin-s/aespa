@@ -26,7 +26,7 @@ export default function CollectionView({
     const ownedCardsMap = new Map(collection.map((uc) => [uc.photocard_id, uc]))
 
     return (
-        <div className='mx-auto w-full max-w-7xl p-6'>
+        <div className='mx-auto flex w-full max-w-7xl justify-center p-6'>
             {/* Cards Grid */}
             <motion.div
                 initial={{ opacity: 0 }}

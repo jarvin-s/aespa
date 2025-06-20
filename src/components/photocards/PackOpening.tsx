@@ -101,7 +101,7 @@ export default function PackOpening({
                             </p>
                         </div>
 
-                        <div className='mb-8'>
+                        <div className='mb-8 flex flex-col items-center gap-4'>
                             <h3 className='mb-4 text-xl font-bold text-white'>
                                 Available packs
                             </h3>
@@ -137,7 +137,7 @@ export default function PackOpening({
                         </div>
 
                         {lockedPacks.length > 0 && (
-                            <div>
+                            <div className='mb-8 flex flex-col items-center gap-4'>
                                 <h3 className='mb-4 text-xl font-bold text-white'>
                                     Unlock at higher levels
                                 </h3>
