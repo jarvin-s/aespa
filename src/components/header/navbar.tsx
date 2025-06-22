@@ -4,17 +4,12 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
-import { Bebas_Neue } from 'next/font/google'
 import localFont from 'next/font/local'
 import { Button } from '@/components/ui/button'
 import { AuthButtons } from '../auth/AuthButtons'
 import Particles from '@/app/components/Particles/Particles'
 import { motion } from 'motion/react'
-
-const bebas_neue = Bebas_Neue({
-    subsets: ['latin'],
-    weight: ['400'],
-})
+import UserProfile from '@/components/ui/user-profile'
 
 const aespaFont = localFont({
     src: '/../../../public/fonts/aespa_Regular.ttf',
@@ -32,6 +27,11 @@ export function Navbar() {
         } else {
             document.body.style.overflow = 'auto'
         }
+    }
+
+    const closeMenu = () => {
+        setIsOpen(false)
+        document.body.style.overflow = 'auto'
     }
 
     useEffect(() => {
@@ -58,7 +58,7 @@ export function Navbar() {
             className='z-50 w-full py-2 text-white'
         >
             <div className='mx-auto max-w-7xl px-4'>
-                <div className='flex items-center justify-between p-4'>
+                <div className='flex items-center justify-between px-4 py-4 md:px-0'>
                     {/* Logo */}
                     <div>
                         <Link href={'/'} className='flex items-center'>
@@ -104,7 +104,7 @@ export function Navbar() {
                                     Quiz
                                 </Link>
                             </div>
-                            {/* <div>
+                            <div>
                                 <Link
                                     href='/members'
                                     className={cn(
@@ -113,7 +113,7 @@ export function Navbar() {
                                 >
                                     Members
                                 </Link>
-                            </div> */}
+                            </div>
                         </motion.div>
                     </div>
 
@@ -123,6 +123,7 @@ export function Navbar() {
                         transition={{ duration: 0.5, delay: 0.4 }}
                         className='hidden items-center gap-4 md:flex'
                     >
+                        <UserProfile showCompact={true} />
                         <AuthButtons />
                     </motion.div>
 
@@ -169,7 +170,11 @@ export function Navbar() {
             >
                 {isOpen && <Particles />}
                 <div className='flex items-center justify-between p-8'>
-                    <Link href={'/'} className='flex items-center'>
+                    <Link
+                        href={'/'}
+                        onClick={closeMenu}
+                        className='flex items-center'
+                    >
                         <Image
                             src='/images/logo.png'
                             alt='aespa logo'
@@ -208,11 +213,12 @@ export function Navbar() {
                     </Button>
                 </div>
                 <div
-                    className={`${bebas_neue.className} mt-20 flex h-full flex-col items-center space-y-8 px-4 lowercase ${aespaFont.className}`}
+                    className={`mt-20 flex h-full flex-col items-center space-y-8 px-4 lowercase ${aespaFont.className}`}
                 >
                     <div>
                         <Link
                             href='/'
+                            onClick={closeMenu}
                             className={cn(
                                 'block rounded-md px-3 py-2 text-6xl text-white hover:text-purple-700'
                             )}
@@ -223,6 +229,7 @@ export function Navbar() {
                     <div>
                         <Link
                             href='/quiz'
+                            onClick={closeMenu}
                             className={cn(
                                 'block rounded-md px-3 py-2 text-6xl text-white hover:text-purple-700'
                             )}
@@ -230,16 +237,17 @@ export function Navbar() {
                             Quiz
                         </Link>
                     </div>
-                    {/* <div>
+                    <div>
                         <Link
                             href='/members'
+                            onClick={closeMenu}
                             className={cn(
                                 'block rounded-md px-3 py-2 text-6xl text-white hover:text-purple-700'
                             )}
                         >
                             Members
                         </Link>
-                    </div> */}
+                    </div>
                 </div>
             </div>
         </motion.nav>

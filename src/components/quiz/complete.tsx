@@ -1,17 +1,89 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { useUser } from '@clerk/nextjs'
 import { CardContent } from '../ui/card'
 import { motion } from 'motion/react'
+import { calculateXPFromScore, getLevelProgressInfo } from '@/lib/xp-system'
 
 interface QuizCompleteProps {
     score: number
     totalQuestions: number
 }
 
+interface UserProgress {
+    xpEarned: number
+    newLevel: number
+    previousLevel: number
+    currentXP: number
+    xpToNextLevel: number
+    progressPercentage: number
+}
+
 const QuizComplete = ({ score }: QuizCompleteProps) => {
     const { user } = useUser()
+    const [userProgress, setUserProgress] = useState<UserProgress | null>(null)
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        const fetchUserProgress = async () => {
+            if (!user) {
+                setLoading(false)
+                return
+            }
+
+            const expectedXPEarned = calculateXPFromScore(score)
+
+            await new Promise((resolve) => setTimeout(resolve, 1000))
+
+            let retryCount = 0
+            const maxRetries = 3
+
+            while (retryCount < maxRetries) {
+                try {
+                    const response = await fetch('/api/user-account')
+                    if (response.ok) {
+                        const data = await response.json()
+                        const userAccount = data.userAccount
+
+                        if (userAccount) {
+                            const progressInfo = getLevelProgressInfo(
+                                userAccount.current_level,
+                                userAccount.total_xp
+                            )
+
+                            const previousXP =
+                                userAccount.total_xp - expectedXPEarned
+                            const previousLevel =
+                                userAccount.current_level -
+                                (userAccount.total_xp > previousXP ? 1 : 0)
+
+                            setUserProgress({
+                                xpEarned: expectedXPEarned,
+                                newLevel: userAccount.current_level,
+                                previousLevel: previousLevel,
+                                currentXP: userAccount.total_xp,
+                                xpToNextLevel: userAccount.xp_to_next_level,
+                                progressPercentage:
+                                    progressInfo.progressPercentage,
+                            })
+                            break
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching user progress:', error)
+                }
+
+                retryCount++
+                if (retryCount < maxRetries) {
+                    await new Promise((resolve) => setTimeout(resolve, 1000))
+                }
+            }
+            setLoading(false)
+        }
+
+        fetchUserProgress()
+    }, [user, score])
 
     return (
         <div className='quiz-complete flex min-h-screen flex-col items-center justify-center text-white'>
@@ -47,6 +119,52 @@ const QuizComplete = ({ score }: QuizCompleteProps) => {
                                     </div>
                                 </div>
                             </div>
+
+                            {/* XP and Level Progression */}
+                            {user && !loading && userProgress && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.5, delay: 1 }}
+                                    className='mb-6 w-full max-w-md'
+                                >
+                                    <div className='p-6'>
+                                        <div className='flex justify-between text-center'>
+                                            <h3 className='mb-2 text-4xl font-bold'>
+                                                XP earned
+                                            </h3>
+                                            <div className='text-4xl font-bold text-yellow-400'>
+                                                +{userProgress.xpEarned} XP
+                                            </div>
+                                        </div>
+
+                                        <div className='text-center'>
+                                            {/* XP Progress Bar */}
+                                            <div className='mb-2 h-3 w-full rounded-full bg-purple-800/50'>
+                                                <motion.div
+                                                    className='h-3 rounded-full bg-gradient-to-r from-purple-400 to-purple-600'
+                                                    initial={{ width: 0 }}
+                                                    animate={{
+                                                        width: `${userProgress.progressPercentage}%`,
+                                                    }}
+                                                    transition={{
+                                                        duration: 1,
+                                                        delay: 1.5,
+                                                    }}
+                                                />
+                                            </div>
+
+                                            <div className='mb-2 text-xl'>
+                                                Level {userProgress.newLevel}
+                                            </div>
+                                            <div className='text-lg text-purple-200'>
+                                                {userProgress.xpToNextLevel} XP
+                                                to next level
+                                            </div>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
                         </div>
 
                         <div className='flex justify-center'>

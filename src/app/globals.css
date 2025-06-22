@@ -99,6 +99,16 @@ body {
     background-attachment: fixed;
 }
 
+.members {
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.88)),
+        url('/images/members/bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
 /* Dotted background */
 .dotted {
     background-image: radial-gradient(#ffffff25 2px, transparent 2px);
