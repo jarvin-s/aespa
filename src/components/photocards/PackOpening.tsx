@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { Sparkles, Package, Gift } from 'lucide-react'
 import PhotocardDisplay from './PhotocardDisplay'
@@ -18,14 +18,14 @@ interface PackOpeningProps {
         PhotocardPack & { is_available: boolean; is_level_locked: boolean }
     >
     onOpenPack: (packId: number) => Promise<PackOpeningResult>
-    userLevel: number
+    userAenergy: number
     onOpeningComplete?: () => void
 }
 
 export default function PackOpening({
     packs,
     onOpenPack,
-    userLevel,
+    userAenergy,
     onOpeningComplete,
 }: PackOpeningProps) {
     const [selectedPack, setSelectedPack] = useState<PhotocardPack | null>(null)
@@ -45,7 +45,6 @@ export default function PackOpening({
 
         try {
             const result = await onOpenPack(pack.id)
-            console.log('Opening result:', result)
             setOpeningResult(result)
             await animateCardReveal(result.cards_obtained)
         } catch (error) {
@@ -129,7 +128,7 @@ export default function PackOpening({
                                                 isOpening &&
                                                 selectedPack?.id === pack.id
                                             }
-                                            userLevel={userLevel}
+                                            userAenergy={userAenergy}
                                         />
                                     ))}
                                 </div>
@@ -148,7 +147,7 @@ export default function PackOpening({
                                             pack={pack}
                                             onOpen={() => {}}
                                             isLocked={true}
-                                            userLevel={userLevel}
+                                            userAenergy={userAenergy}
                                         />
                                     ))}
                                 </div>
@@ -345,7 +344,7 @@ interface PackCardProps {
     onOpen: () => void
     isOpening?: boolean
     isLocked?: boolean
-    userLevel: number
+    userAenergy: number
 }
 
 function PackCard({
@@ -353,116 +352,182 @@ function PackCard({
     onOpen,
     isOpening = false,
     isLocked = false,
+    userAenergy,
 }: PackCardProps) {
-    const canAfford = pack.is_available && !isLocked
+    const [error, setError] = useState<string | null>(null)
+    const [nextAvailable, setNextAvailable] = useState<Date | null>(null)
+    const [timeLeft, setTimeLeft] = useState<string>('')
+    const [isChecking, setIsChecking] = useState(true)
+
+    useEffect(() => {
+        const checkCooldown = async () => {
+            if (pack.cost_type === 'free') {
+                try {
+                    const response = await fetch(
+                        '/api/photocards/packs/cooldown',
+                        {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ pack_id: pack.id }),
+                        }
+                    )
+                    const data = await response.json()
+
+                    if (data.next_available) {
+                        setNextAvailable(new Date(data.next_available))
+                    }
+                } catch (error) {
+                    console.error('Error checking cooldown:', error)
+                } finally {
+                    setIsChecking(false)
+                }
+            } else {
+                setIsChecking(false)
+            }
+        }
+
+        checkCooldown()
+    }, [pack.cost_type, pack.id])
+
+    useEffect(() => {
+        if (nextAvailable) {
+            const calculateTimeLeft = () => {
+                const now = new Date()
+                const diff = nextAvailable.getTime() - now.getTime()
+
+                if (diff <= 0) {
+                    setNextAvailable(null)
+                    setTimeLeft('')
+                    setError(null)
+                    return false
+                }
+
+                const hours = Math.floor(diff / (1000 * 60 * 60))
+                const minutes = Math.floor(
+                    (diff % (1000 * 60 * 60)) / (1000 * 60)
+                )
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000)
+
+                const formattedHours = String(hours).padStart(2, '0')
+                const formattedMinutes = String(minutes).padStart(2, '0')
+                const formattedSeconds = String(seconds).padStart(2, '0')
+
+                setTimeLeft(
+                    `${formattedHours}:${formattedMinutes}:${formattedSeconds}`
+                )
+                return true
+            }
+
+            if (!calculateTimeLeft()) return
+
+            const interval = setInterval(calculateTimeLeft, 1000)
+            return () => clearInterval(interval)
+        }
+    }, [nextAvailable])
+
+    const handleOpenClick = async () => {
+        try {
+            await onOpen()
+            setError(null)
+        } catch (error: unknown) {
+            const err = error as { error?: string; next_available?: string }
+            if (err.next_available) {
+                setNextAvailable(new Date(err.next_available))
+            }
+            setError(err.error || 'Failed to open pack')
+        }
+    }
+
+    const canOpen =
+        !isLocked &&
+        !isChecking &&
+        (pack.cost_type === 'free' ||
+            (pack.cost_type === 'aenergy' && userAenergy >= pack.cost_amount))
 
     return (
-        <motion.div whileTap={canAfford ? { scale: 0.98 } : {}}>
-            <Card
-                className={`relative max-w-[300px] cursor-pointer overflow-hidden transition-all ${
-                    canAfford
-                        ? 'border-purple-400/50 hover:border-purple-400 hover:shadow-lg hover:shadow-purple-500/20'
-                        : 'border-gray-600 opacity-60'
-                } ${isOpening ? 'animate-pulse border-yellow-400' : ''} `}
-            >
-                <CardContent className='p-6'>
-                    <div className='mb-4 text-center'>
-                        <motion.div
-                            animate={
-                                isOpening ? { rotate: [0, 10, -10, 0] } : {}
-                            }
-                            transition={{
-                                duration: 0.5,
-                                repeat: isOpening ? Infinity : 0,
-                            }}
-                        >
-                            <Package
-                                size={48}
-                                className={`mx-auto ${canAfford ? 'text-purple-400' : 'text-gray-500'}`}
-                            />
-                        </motion.div>
-                    </div>
+        <Card className='relative overflow-hidden bg-black/50 transition-all hover:bg-black/60'>
+            <CardContent className='p-6'>
+                <div className='mb-4 flex items-center justify-between'>
+                    <h3 className='text-xl font-bold text-white'>
+                        {pack.name}
+                    </h3>
+                    {pack.cost_type === 'aenergy' ? (
+                        <div className='flex items-center gap-2'>
+                            <Sparkles className='h-5 w-5 text-purple-400' />
+                            <span className='font-bold text-purple-400'>
+                                {pack.cost_amount}
+                            </span>
+                        </div>
+                    ) : (
+                        <div className='rounded-full bg-green-500/20 px-3 py-1 text-sm font-medium text-green-400'>
+                            Free
+                        </div>
+                    )}
+                </div>
 
-                    <div className='mb-4 text-center'>
-                        <h3
-                            className={`mb-2 text-lg font-bold ${canAfford ? 'text-white' : 'text-gray-400'}`}
-                        >
-                            {pack.name}
-                        </h3>
-                        <p
-                            className={`mb-3 text-sm ${canAfford ? 'text-gray-300' : 'text-gray-500'}`}
-                        >
-                            {pack.description}
+                <p className='mb-4 text-sm text-gray-400'>{pack.description}</p>
+
+                <div className='mb-6 flex items-center gap-4'>
+                    <div>
+                        <p className='text-sm text-gray-400'>Cards per pack</p>
+                        <p className='font-bold text-white'>
+                            {pack.cards_per_pack}
                         </p>
-
-                        <div className='space-y-1 text-xs'>
-                            <div
-                                className={
-                                    canAfford
-                                        ? 'text-gray-300'
-                                        : 'text-gray-500'
-                                }
+                    </div>
+                    {pack.guaranteed_rarity && (
+                        <div>
+                            <p className='text-sm text-gray-400'>
+                                Guaranteed rarity
+                            </p>
+                            <p
+                                className='font-bold'
+                                style={{
+                                    color: RARITY_CONFIG[pack.guaranteed_rarity]
+                                        .color,
+                                }}
                             >
-                                {pack.cards_per_pack} cards per pack
-                            </div>
-                            {pack.guaranteed_rarity && (
-                                <div className='text-yellow-400'>
-                                    Guaranteed {pack.guaranteed_rarity}+
-                                </div>
-                            )}
+                                {RARITY_CONFIG[pack.guaranteed_rarity].name}
+                            </p>
                         </div>
-                    </div>
+                    )}
+                </div>
 
-                    <div className='mb-4'>
-                        <div
-                            className={`text-center text-sm ${canAfford ? 'text-green-400' : 'text-red-400'}`}
-                        >
-                            {isLocked ? (
-                                <>
-                                    🔒 Unlocks at level{' '}
-                                    {pack.available_from_level}
-                                </>
-                            ) : pack.cost_type === 'free' ? (
-                                <>🎁 Free pack</>
-                            ) : pack.cost_type === 'level' ? (
-                                <>⭐ Level {pack.cost_amount} required</>
-                            ) : (
-                                <>
-                                    💎 Costs {pack.cost_amount} {pack.cost_type}
-                                </>
-                            )}
-                        </div>
-                    </div>
+                {error && <p className='mb-4 text-sm text-red-400'>{error}</p>}
 
-                    <Button
-                        onClick={onOpen}
-                        disabled={!canAfford || isOpening}
-                        className={`w-full transition-all ${
-                            canAfford
-                                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600'
-                                : 'cursor-not-allowed bg-gray-600 text-gray-400'
-                        } `}
-                    >
-                        {isOpening ? (
-                            <>
-                                <Sparkles
-                                    className='mr-2 animate-spin'
-                                    size={16}
-                                />
-                                Opening...
-                            </>
-                        ) : isLocked ? (
-                            `Level ${pack.available_from_level} required`
-                        ) : (
-                            `Open pack`
-                        )}
-                    </Button>
-                </CardContent>
+                <Button
+                    onClick={handleOpenClick}
+                    disabled={!canOpen || isOpening || !!timeLeft || isChecking}
+                    className={`w-full transition-all ${
+                        canOpen && !timeLeft && !isChecking
+                            ? 'cursor-pointer bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600'
+                            : 'cursor-not-allowed bg-gray-600 text-gray-400'
+                    } `}
+                >
+                    {isLocked ? (
+                        <>
+                            <Package className='mr-2 h-5 w-5' />
+                            Available at level {pack.available_from_level}
+                        </>
+                    ) : isChecking ? (
+                        'Checking availability...'
+                    ) : isOpening ? (
+                        'Opening...'
+                    ) : timeLeft ? (
+                        <>
+                            Available in
+                            <span className='font-mono text-yellow-400'>
+                                {timeLeft}
+                            </span>
+                        </>
+                    ) : (
+                        'Open pack'
+                    )}
+                </Button>
+            </CardContent>
 
-                {canAfford && !isLocked && (
-                    <div className='pointer-events-none absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5' />
-                )}
-            </Card>
-        </motion.div>
+            {canOpen && !isLocked && !timeLeft && !isChecking && (
+                <div className='pointer-events-none absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5' />
+            )}
+        </Card>
     )
 }

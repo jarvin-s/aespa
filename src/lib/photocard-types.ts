@@ -1,6 +1,6 @@
 export type PhotocardRarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary'
 export type PhotocardMember = 'karina' | 'winter' | 'giselle' | 'ningning' | 'group'
-export type PackCostType = 'level' | 'xp' | 'score' | 'free'
+export type PackCostType = 'aenergy' | 'free'
 export type ObtainedMethod = 'pack_opening' | 'level_reward' | 'achievement' | 'special_event'
 
 export interface PhotocardEra {
@@ -164,7 +164,7 @@ export const MEMBER_CONFIG: Record<PhotocardMember, {
     },
     winter: {
         color: '#87CEEB',
-        name: 'winter', 
+        name: 'winter',
         displayName: 'Winter'
     },
     giselle: {
@@ -205,14 +205,12 @@ export function formatObtainedMethod(method: ObtainedMethod): string {
     }
 }
 
-export function canAffordPack(pack: PhotocardPack, userStats: { level: number, xp: number, score: number }): boolean {
+export function canAffordPack(pack: PhotocardPack, userStats: { level: number, xp: number, score: number, aenergy: number }): boolean {
     if (userStats.level < pack.available_from_level) return false
-    
+
     switch (pack.cost_type) {
         case 'free': return true
-        case 'level': return userStats.level >= pack.cost_amount
-        case 'xp': return userStats.xp >= pack.cost_amount
-        case 'score': return userStats.score >= pack.cost_amount
+        case 'aenergy': return userStats.aenergy >= pack.cost_amount
         default: return false
     }
 } 

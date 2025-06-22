@@ -61,7 +61,8 @@ async function updateUserXP(userId: string, scoreEarned: number) {
                 current_level: progression.newLevel,
                 xp_to_next_level: progression.xpToNextLevel,
                 total_quizzes_completed: 1,
-                total_score: scoreEarned
+                total_score: scoreEarned,
+                aenergy: progression.aenergyEarned
             }])
 
         if (createError) {
@@ -83,7 +84,8 @@ async function updateUserXP(userId: string, scoreEarned: number) {
             current_level: progression.newLevel,
             xp_to_next_level: progression.xpToNextLevel,
             total_quizzes_completed: currentAccount.total_quizzes_completed + 1,
-            total_score: currentAccount.total_score + scoreEarned
+            total_score: currentAccount.total_score + scoreEarned,
+            aenergy: currentAccount.aenergy + progression.aenergyEarned
         })
         .eq('user_id', userId)
 

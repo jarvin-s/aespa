@@ -37,7 +37,7 @@ export default function PhotocardsPage() {
             PhotocardPack & { is_available: boolean; is_level_locked: boolean }
         >
     >([])
-    const [userLevel, setUserLevel] = useState(1)
+    const [userAenergy, setUserAenergy] = useState(0)
 
     useEffect(() => {
         if (isLoaded && user) {
@@ -73,7 +73,7 @@ export default function PhotocardsPage() {
             const userResponse = await fetch('/api/user-account')
             if (userResponse.ok) {
                 const { userAccount } = await userResponse.json()
-                setUserLevel(userAccount.current_level)
+                setUserAenergy(userAccount.aenergy)
             }
         } catch (error) {
             console.error('Error loading photocard data:', error)
@@ -122,11 +122,15 @@ export default function PhotocardsPage() {
                 body: JSON.stringify({ pack_id: packId }),
             })
 
+            const result = await response.json()
+
             if (!response.ok) {
-                throw new Error('Failed to open pack')
+                throw {
+                    error: result.error,
+                    next_available: result.next_available
+                }
             }
 
-            const result: PackOpeningResult = await response.json()
             return result
         } catch (error) {
             console.error('Error opening pack:', error)
@@ -277,7 +281,7 @@ export default function PhotocardsPage() {
                         <PackOpening
                             packs={availablePacks}
                             onOpenPack={handleOpenPack}
-                            userLevel={userLevel}
+                            userAenergy={userAenergy}
                             onOpeningComplete={handleOpeningComplete}
                         />
                     </motion.div>

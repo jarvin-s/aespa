@@ -21,7 +21,7 @@ export async function GET() {
         // Get user's current level for pack availability
         const { data: userAccount, error: userError } = await supabase
             .from('user_accounts')
-            .select('current_level, total_xp, total_score')
+            .select('current_level, total_xp, total_score, aenergy')
             .eq('user_id', userId)
             .single()
 
@@ -40,14 +40,9 @@ export async function GET() {
             return NextResponse.json({ error: packsError.message }, { status: 500 })
         }
 
-        // Filter packs based on user level and affordability
         const availablePacks = (packs || []).map(pack => ({
             ...pack,
-            is_available: canAffordPack(pack, {
-                level: userAccount?.current_level || 1,
-                xp: userAccount?.total_xp || 0,
-                score: userAccount?.total_score || 0
-            }),
+            is_available: userAccount?.current_level >= pack.available_from_level,
             is_level_locked: (userAccount?.current_level || 1) < pack.available_from_level
         }))
 
@@ -88,10 +83,33 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Pack not found' }, { status: 404 })
         }
 
+        if (pack.cost_type === 'free') {
+            const { data: cooldown } = await supabase
+                .from('pack_opening_cooldowns')
+                .select('last_opened_at')
+                .eq('user_id', userId)
+                .eq('pack_id', pack_id)
+                .single()
+
+            if (cooldown) {
+                const lastOpened = new Date(cooldown.last_opened_at)
+                const now = new Date()
+                const nextAvailable = new Date(lastOpened)
+                nextAvailable.setDate(nextAvailable.getDate() + 1)
+
+                if (now < nextAvailable) {
+                    return NextResponse.json({
+                        error: 'Free pack can only be opened once per day',
+                        next_available: nextAvailable.toISOString()
+                    }, { status: 429 })
+                }
+            }
+        }
+
         // Get user's current stats
         const { data: userAccount, error: userError } = await supabase
             .from('user_accounts')
-            .select('current_level, total_xp, total_score')
+            .select('current_level, total_xp, total_score, aenergy')
             .eq('user_id', userId)
             .single()
 
@@ -102,9 +120,38 @@ export async function POST(request: NextRequest) {
         if (!canAffordPack(pack, {
             level: userAccount.current_level,
             xp: userAccount.total_xp,
-            score: userAccount.total_score
+            score: userAccount.total_score,
+            aenergy: userAccount.aenergy
         })) {
             return NextResponse.json({ error: 'Cannot afford this pack' }, { status: 403 })
+        }
+
+        if (pack.cost_type === 'aenergy') {
+            const { error: updateError } = await supabase
+                .from('user_accounts')
+                .update({
+                    aenergy: userAccount.aenergy - pack.cost_amount
+                })
+                .eq('user_id', userId)
+
+            if (updateError) {
+                return NextResponse.json({ error: 'Failed to deduct ænergy' }, { status: 500 })
+            }
+        }
+
+        // Update or insert cooldown for free packs
+        if (pack.cost_type === 'free') {
+            const { error: cooldownError } = await supabase
+                .from('pack_opening_cooldowns')
+                .upsert({
+                    user_id: userId,
+                    pack_id: pack_id,
+                    last_opened_at: new Date().toISOString()
+                })
+
+            if (cooldownError) {
+                return NextResponse.json({ error: 'Failed to update cooldown' }, { status: 500 })
+            }
         }
 
         const { data: availableCards, error: cardsError } = await supabase

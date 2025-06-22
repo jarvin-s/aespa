@@ -18,6 +18,7 @@ interface UserProgress {
     currentXP: number
     xpToNextLevel: number
     progressPercentage: number
+    aenergyEarned: number
 }
 
 const QuizComplete = ({ score }: QuizCompleteProps) => {
@@ -66,6 +67,7 @@ const QuizComplete = ({ score }: QuizCompleteProps) => {
                                 xpToNextLevel: userAccount.xp_to_next_level,
                                 progressPercentage:
                                     progressInfo.progressPercentage,
+                                aenergyEarned: userAccount.aenergy_earned,
                             })
                             break
                         }
@@ -121,7 +123,7 @@ const QuizComplete = ({ score }: QuizCompleteProps) => {
                             </div>
 
                             {/* XP and Level Progression */}
-                            {user && !loading && userProgress && (
+                            {userProgress && !loading && (
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
@@ -131,36 +133,39 @@ const QuizComplete = ({ score }: QuizCompleteProps) => {
                                     <div className='p-6'>
                                         <div className='flex justify-between text-center'>
                                             <h3 className='mb-2 text-4xl font-bold'>
-                                                XP earned
+                                                Rewards
                                             </h3>
-                                            <div className='text-4xl font-bold text-yellow-400'>
+                                        </div>
+                                        <div className='mb-4 flex justify-between'>
+                                            <div className='text-2xl font-bold text-yellow-400'>
                                                 +{userProgress.xpEarned} XP
+                                            </div>
+                                            <div className='text-2xl font-bold text-purple-400'>
+                                                +{userProgress.aenergyEarned} ænergy
                                             </div>
                                         </div>
 
-                                        <div className='text-center'>
-                                            {/* XP Progress Bar */}
-                                            <div className='mb-2 h-3 w-full rounded-full bg-purple-800/50'>
-                                                <motion.div
-                                                    className='h-3 rounded-full bg-gradient-to-r from-purple-400 to-purple-600'
-                                                    initial={{ width: 0 }}
-                                                    animate={{
-                                                        width: `${userProgress.progressPercentage}%`,
-                                                    }}
-                                                    transition={{
-                                                        duration: 1,
-                                                        delay: 1.5,
-                                                    }}
-                                                />
-                                            </div>
+                                        {/* XP Progress Bar */}
+                                        <div className='mb-2 h-3 w-full rounded-full bg-purple-800/50'>
+                                            <motion.div
+                                                className='h-3 rounded-full bg-gradient-to-r from-purple-400 to-purple-600'
+                                                initial={{ width: 0 }}
+                                                animate={{
+                                                    width: `${userProgress.progressPercentage}%`,
+                                                }}
+                                                transition={{
+                                                    duration: 1,
+                                                    delay: 1.5,
+                                                }}
+                                            />
+                                        </div>
 
-                                            <div className='mb-2 text-xl'>
-                                                Level {userProgress.newLevel}
-                                            </div>
-                                            <div className='text-lg text-purple-200'>
-                                                {userProgress.xpToNextLevel} XP
-                                                to next level
-                                            </div>
+                                        <div className='mb-2 text-xl'>
+                                            Level {userProgress.newLevel}
+                                        </div>
+                                        <div className='text-lg text-purple-200'>
+                                            {userProgress.xpToNextLevel} XP
+                                            to next level
                                         </div>
                                     </div>
                                 </motion.div>

@@ -8,6 +8,7 @@ export interface UserAccount {
     xp_to_next_level: number
     total_quizzes_completed: number
     total_score: number
+    aenergy: number
     created_at: string
     updated_at: string
 }
@@ -18,6 +19,7 @@ export interface XPCalculationResult {
     levelUp: boolean
     newLevel: number
     xpToNextLevel: number
+    aenergyEarned: number
 }
 
 /**
@@ -84,11 +86,29 @@ export function getXPToNextLevel(currentLevel: number, totalXP: number): number 
 }
 
 /**
- * Calculate level progression after earning XP
+ * Calculate ænergy earned from quiz completion
+ * @param score - Quiz score
+ * @returns ænergy earned
+ */
+export function calculateAenergyFromScore(score: number): number {
+    return 5 + Math.floor(score / 2000)
+}
+
+/**
+ * Calculate ænergy earned from leveling up
+ * @param newLevel - The level reached
+ * @returns ænergy earned
+ */
+export function calculateAenergyFromLevelUp(newLevel: number): number {
+    return newLevel * 25
+}
+
+/**
+ * Calculate level progression and ænergy rewards
  * @param currentXP - User's current total XP
  * @param currentLevel - User's current level
  * @param scoreEarned - Score earned from quiz
- * @returns XP calculation result with level progression info
+ * @returns XP and ænergy calculation result
  */
 export function calculateLevelProgression(
     currentXP: number,
@@ -101,12 +121,17 @@ export function calculateLevelProgression(
     const levelUp = newLevel > currentLevel
     const xpToNextLevel = getXPToNextLevel(newLevel, newTotalXP)
 
+    const quizAenergy = calculateAenergyFromScore(scoreEarned)
+    const levelUpAenergy = levelUp ? calculateAenergyFromLevelUp(newLevel) : 0
+    const aenergyEarned = quizAenergy + levelUpAenergy
+
     return {
         xpEarned,
         newTotalXP,
         levelUp,
         newLevel,
-        xpToNextLevel
+        xpToNextLevel,
+        aenergyEarned
     }
 }
 
