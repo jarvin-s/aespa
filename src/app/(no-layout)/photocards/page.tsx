@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { motion } from 'motion/react'
 import { Bebas_Neue } from 'next/font/google'
-import { ArrowLeft, Package } from 'lucide-react'
+import { Package, Star, Zap } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import CollectionView from '@/components/photocards/CollectionView'
@@ -38,6 +38,8 @@ export default function PhotocardsPage() {
         >
     >([])
     const [userAenergy, setUserAenergy] = useState(0)
+    const [userLevel, setUserLevel] = useState(1)
+    const [userExp, setUserExp] = useState(0)
 
     useEffect(() => {
         if (isLoaded && user) {
@@ -74,6 +76,8 @@ export default function PhotocardsPage() {
             if (userResponse.ok) {
                 const { userAccount } = await userResponse.json()
                 setUserAenergy(userAccount.aenergy)
+                setUserLevel(userAccount.current_level)
+                setUserExp(userAccount.total_xp)
             }
         } catch (error) {
             console.error('Error loading photocard data:', error)
@@ -127,7 +131,7 @@ export default function PhotocardsPage() {
             if (!response.ok) {
                 throw {
                     error: result.error,
-                    next_available: result.next_available
+                    next_available: result.next_available,
                 }
             }
 
@@ -179,18 +183,29 @@ export default function PhotocardsPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className='relative flex w-full justify-center px-6 py-4 text-white'
+                className='relative flex w-full flex-col items-center px-6 py-4 text-white'
             >
-                <div className='absolute top-10 left-4 md:top-14 md:left-8'>
-                    <Link href='/quiz'>
-                        <ArrowLeft />
-                    </Link>
-                </div>
                 <h1
                     className={`${bebasNeue.className} text-6xl font-bold md:text-8xl`}
                 >
                     Photocards
                 </h1>
+
+                <div className='mt-4 flex items-center gap-6'>
+                    <div className='flex items-center gap-2'>
+                        <Zap className='text-yellow-400' />
+                        <span className='font-bold text-yellow-400'>
+                            {userAenergy}
+                        </span>
+                    </div>
+                    <div className='flex items-center gap-2'>
+                        <Star className='text-purple-400' />
+                        <span className='font-bold text-purple-400'>
+                            Level {userLevel}
+                        </span>
+                    </div>
+                    <div className='text-sm text-gray-400'>{userExp} XP</div>
+                </div>
             </motion.header>
 
             {/* Tab Navigation */}

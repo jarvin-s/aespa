@@ -6,11 +6,11 @@ import { Check, X } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import { useUser } from '@clerk/nextjs'
 import { useEffect, useState } from 'react'
+import { motion } from 'motion/react'
 import { Bebas_Neue } from 'next/font/google'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import UserProfile from '@/components/ui/user-profile'
-import { motion } from 'motion/react'
 
 interface PastQuizzes {
     session_id: string
@@ -87,11 +87,6 @@ export default function QuizDashboard() {
                 transition={{ duration: 0.5 }}
                 className='relative flex w-full justify-center px-6 py-4 text-white'
             >
-                <div className='absolute top-10 left-4 md:top-14 md:left-8'>
-                    <Link href='/quiz'>
-                        <ArrowLeft />
-                    </Link>
-                </div>
                 <h1
                     className={`${bebasNeue.className} text-7xl font-bold md:text-9xl`}
                 >
@@ -314,25 +309,5 @@ export default function QuizDashboard() {
                 </div>
             </main>
         </div>
-    )
-}
-
-const ArrowLeft = () => {
-    return (
-        <svg
-            xmlns='http://www.w3.org/2000/svg'
-            width='24'
-            height='24'
-            viewBox='0 0 24 24'
-        >
-            <path
-                fill='none'
-                stroke='currentColor'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth='2'
-                d='m12 19l-7-7l7-7m7 7H5'
-            />
-        </svg>
     )
 }

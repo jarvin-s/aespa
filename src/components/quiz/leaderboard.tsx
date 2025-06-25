@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useUser } from '@clerk/nextjs'
 import Image from 'next/image'
-import Link from 'next/link'
 import { Bebas_Neue } from 'next/font/google'
+import { motion } from 'motion/react'
 
 const bebasNeue = Bebas_Neue({
     subsets: ['latin'],
@@ -95,16 +95,18 @@ export default function Leaderboard() {
     return (
         <div className='quiz-leaderboard'>
             <div className='mx-auto min-h-screen max-w-7xl px-4 py-8 text-white'>
-                <div className='absolute top-10 left-4 md:top-14 md:left-8'>
-                    <Link href='/quiz'>
-                        <ArrowLeft />
-                    </Link>
-                </div>
-                <h1
-                    className={`${bebasNeue.className} mb-8 text-center text-7xl font-bold`}
+                <motion.header
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className='relative flex w-full justify-center px-6 py-4 text-white'
                 >
-                    Leaderboard
-                </h1>
+                    <h1
+                        className={`${bebasNeue.className} text-7xl font-bold md:text-9xl`}
+                    >
+                        Leaderboard
+                    </h1>
+                </motion.header>
 
                 {/* Top 3 Players Cards */}
                 {leaderboardData.length > 0 && (
@@ -484,25 +486,5 @@ export default function Leaderboard() {
                 )}
             </div>
         </div>
-    )
-}
-
-const ArrowLeft = () => {
-    return (
-        <svg
-            xmlns='http://www.w3.org/2000/svg'
-            width='24'
-            height='24'
-            viewBox='0 0 24 24'
-        >
-            <path
-                fill='none'
-                stroke='currentColor'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth='2'
-                d='m12 19l-7-7l7-7m7 7H5'
-            />
-        </svg>
     )
 }

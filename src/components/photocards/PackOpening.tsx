@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { Sparkles, Package, Gift } from 'lucide-react'
+import { Package, Gift } from 'lucide-react'
 import PhotocardDisplay from './PhotocardDisplay'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -32,8 +32,9 @@ export default function PackOpening({
     const [isOpening, setIsOpening] = useState(false)
     const [openingResult, setOpeningResult] =
         useState<PackOpeningResult | null>(null)
-    const [revealedCards, setRevealedCards] = useState<Photocard[]>([])
+    const [revealedCards, setRevealedCards] = useState<(Photocard & { isHidden?: boolean })[]>([])
     const [showingResults, setShowingResults] = useState(false)
+    const [cardsVisible, setCardsVisible] = useState(false)
 
     const handleOpenPack = async (pack: PhotocardPack) => {
         if (isOpening) return
@@ -42,6 +43,7 @@ export default function PackOpening({
         setIsOpening(true)
         setRevealedCards([])
         setShowingResults(false)
+        setCardsVisible(false)
 
         try {
             const result = await onOpenPack(pack.id)
@@ -56,10 +58,20 @@ export default function PackOpening({
 
     const animateCardReveal = async (cards: Photocard[]) => {
         setShowingResults(true)
+        
+        setRevealedCards(cards.map(card => ({ ...card, isHidden: true })))
+        
+        setCardsVisible(true)
+
+        await new Promise((resolve) => setTimeout(resolve, 500))
 
         for (let i = 0; i < cards.length; i++) {
-            await new Promise((resolve) => setTimeout(resolve, 800))
-            setRevealedCards((prev) => [...prev, cards[i]])
+            await new Promise((resolve) => setTimeout(resolve, 1000))
+            setRevealedCards(prev => {
+                const newCards = [...prev]
+                newCards[i] = { ...cards[i], isHidden: false }
+                return newCards
+            })
         }
     }
 
@@ -71,6 +83,7 @@ export default function PackOpening({
         setOpeningResult(null)
         setRevealedCards([])
         setShowingResults(false)
+        setCardsVisible(false)
     }
 
     const availablePacks = packs.filter(
@@ -175,59 +188,67 @@ export default function PackOpening({
                                 }).map((_, index) => (
                                     <div
                                         key={index}
-                                        className='flex justify-center'
+                                        className='flex justify-center perspective-1000'
                                     >
-                                        {revealedCards[index] ? (
-                                            <motion.div
-                                                initial={{
-                                                    scale: 0,
-                                                    rotate: 180,
-                                                }}
-                                                animate={{
-                                                    scale: 1,
-                                                    rotate: 0,
-                                                }}
-                                                transition={{
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ 
+                                                opacity: cardsVisible ? 1 : 0,
+                                                rotateY: revealedCards[index]?.isHidden ? 0 : 180,
+                                            }}
+                                            transition={{
+                                                opacity: { duration: 0.3 },
+                                                rotateY: {
                                                     type: 'spring',
-                                                    stiffness: 300,
+                                                    stiffness: 260,
                                                     damping: 20,
-                                                    delay: 0.2,
-                                                }}
+                                                }
+                                            }}
+                                            className='relative preserve-3d'
+                                        >
+                                            {/* Front side (Package) */}
+                                            <motion.div 
+                                                className='absolute inset-0 flex h-64 w-48 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-purple-700 backface-hidden'
                                             >
-                                                <PhotocardDisplay
-                                                    photocard={
-                                                        revealedCards[index]
-                                                    }
-                                                    isOwned={true}
-                                                    size='large'
-                                                    className='transform hover:scale-105'
-                                                />
-                                                {openingResult?.new_cards.includes(
-                                                    revealedCards[index]
-                                                ) && (
-                                                    <motion.div
-                                                        initial={{
-                                                            opacity: 0,
-                                                            y: 20,
-                                                        }}
-                                                        animate={{
-                                                            opacity: 1,
-                                                            y: 0,
-                                                        }}
-                                                        className='mt-2 font-bold text-green-400'
-                                                    >
-                                                        NEW!
-                                                    </motion.div>
-                                                )}
-                                            </motion.div>
-                                        ) : (
-                                            <motion.div className='flex h-64 w-48 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-purple-700'>
                                                 <Package
                                                     size={48}
                                                     className='text-white'
                                                 />
                                             </motion.div>
-                                        )}
+
+                                            {/* Back side (Photocard) */}
+                                            <motion.div
+                                                className='backface-hidden rotate-y-180'
+                                            >
+                                                {revealedCards[index] && (
+                                                    <>
+                                                        <PhotocardDisplay
+                                                            photocard={revealedCards[index]}
+                                                            isOwned={true}
+                                                            size='large'
+                                                            className='transform hover:scale-105'
+                                                        />
+                                                        {openingResult?.new_cards.includes(
+                                                            revealedCards[index]
+                                                        ) && (
+                                                            <motion.div
+                                                                initial={{
+                                                                    opacity: 0,
+                                                                    y: 20,
+                                                                }}
+                                                                animate={{
+                                                                    opacity: 1,
+                                                                    y: 0,
+                                                                }}
+                                                                className='mt-2 font-bold text-green-400'
+                                                            >
+                                                                NEW!
+                                                            </motion.div>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </motion.div>
+                                        </motion.div>
                                     </div>
                                 ))}
                         </div>
@@ -425,9 +446,9 @@ function PackCard({
         }
     }, [nextAvailable])
 
-    const handleOpenClick = async () => {
+    const handleOpenClick = () => {
         try {
-            await onOpen()
+            onOpen()
             setError(null)
         } catch (error: unknown) {
             const err = error as { error?: string; next_available?: string }
@@ -453,7 +474,7 @@ function PackCard({
                     </h3>
                     {pack.cost_type === 'aenergy' ? (
                         <div className='flex items-center gap-2'>
-                            <Sparkles className='h-5 w-5 text-purple-400' />
+                            <AenergyIcon />
                             <span className='font-bold text-purple-400'>
                                 {pack.cost_amount}
                             </span>
@@ -529,5 +550,23 @@ function PackCard({
                 <div className='pointer-events-none absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5' />
             )}
         </Card>
+    )
+}
+
+const AenergyIcon = () => {
+    return (
+        <>
+            <svg
+                xmlns='http://www.w3.org/2000/svg'
+                width='24'
+                height='24'
+                viewBox='0 0 64 64'
+            >
+                <path
+                    fill='#890096'
+                    d='M43.4.159L12.06 28.492l24.31 7.538L18.12 64l35.26-33.426l-18.978-8.464z'
+                />
+            </svg>
+        </>
     )
 }

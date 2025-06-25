@@ -91,7 +91,7 @@ export default function PhotocardDisplay({
                             <div className='flex items-center gap-1'>
                                 {/* Rarity Badge */}
                                 <Badge
-                                    className={`bg-gradient-to-r px-1 py-0 text-xs ${rarityConfig.gradient} border-none text-white`}
+                                    className={`bg-gradient-to-r px-1 py-0 text-sm ${rarityConfig.gradient} border-none text-white`}
                                 >
                                     {rarityConfig.name}
                                 </Badge>
