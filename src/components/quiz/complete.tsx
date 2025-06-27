@@ -67,7 +67,7 @@ const QuizComplete = ({ score }: QuizCompleteProps) => {
                                 xpToNextLevel: userAccount.xp_to_next_level,
                                 progressPercentage:
                                     progressInfo.progressPercentage,
-                                aenergyEarned: userAccount.aenergy_earned,
+                                aenergyEarned: Math.floor(score / 2000), // Calculate aenergy based on score
                             })
                             break
                         }
@@ -141,7 +141,8 @@ const QuizComplete = ({ score }: QuizCompleteProps) => {
                                                 +{userProgress.xpEarned} XP
                                             </div>
                                             <div className='text-2xl font-bold text-purple-400'>
-                                                +{userProgress.aenergyEarned} ænergy
+                                                +{userProgress.aenergyEarned}{' '}
+                                                ænergy
                                             </div>
                                         </div>
 
@@ -164,8 +165,8 @@ const QuizComplete = ({ score }: QuizCompleteProps) => {
                                             Level {userProgress.newLevel}
                                         </div>
                                         <div className='text-lg text-purple-200'>
-                                            {userProgress.xpToNextLevel} XP
-                                            to next level
+                                            {userProgress.xpToNextLevel} XP to
+                                            next level
                                         </div>
                                     </div>
                                 </motion.div>

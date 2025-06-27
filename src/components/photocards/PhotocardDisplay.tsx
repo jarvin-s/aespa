@@ -3,7 +3,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { motion } from 'motion/react'
-import { Heart, Star } from 'lucide-react'
+import { Heart, Lock, Star } from 'lucide-react'
 import type { Photocard } from '@/lib/photocard-types'
 import { RARITY_CONFIG, MEMBER_CONFIG } from '@/lib/photocard-types'
 import { Badge } from '@/components/ui/badge'
@@ -124,8 +124,8 @@ export default function PhotocardDisplay({
                 {/* Not Owned Overlay */}
                 {!isOwned && (
                     <div className='absolute inset-0 z-20 flex items-center justify-center bg-black/50'>
-                        <div className='text-center text-white'>
-                            <div className='text-lg'>🔒</div>
+                        <div className='flex flex-col items-center text-center text-white'>
+                            <Lock size={24} />
                             <div className='mt-1 text-xs'>Not owned</div>
                         </div>
                     </div>
