@@ -267,45 +267,6 @@ export default function QuizDashboard() {
                             </div>
                         )}
                     </div>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 1.25, duration: 0.5 }}
-                        className='max-w-7xl'
-                    >
-                        <div className='rounded-md bg-gradient-to-br from-purple-400 to-purple-800 p-6 text-white shadow-lg'>
-                            <h3 className='mb-4 text-xl font-bold'>
-                                Quick links
-                            </h3>
-                            <div className='space-y-3'>
-                                <Link
-                                    href='/quiz'
-                                    className='block rounded-md bg-white/10 p-4 transition-all hover:bg-white/20'
-                                >
-                                    Take a new quiz
-                                </Link>
-                                <Link
-                                    href='/photocards'
-                                    className='block rounded-md bg-white/10 p-4 transition-all hover:bg-white/20'
-                                >
-                                    View photocard collection
-                                </Link>
-                                <Link
-                                    href='/leaderboard'
-                                    className='block rounded-md bg-white/10 p-4 transition-all hover:bg-white/20'
-                                >
-                                    Check out the leaderboard
-                                </Link>
-                                <Link
-                                    href='/'
-                                    className='block rounded-md bg-white/10 p-4 transition-all hover:bg-white/20'
-                                >
-                                    Back to home
-                                </Link>
-                            </div>
-                        </div>
-                    </motion.div>
                 </div>
             </main>
         </div>
