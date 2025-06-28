@@ -7,8 +7,6 @@ import {
     Trophy,
     Image as ImageIcon,
     LayoutDashboard,
-    Menu,
-    X,
     ChevronsRight,
     ChevronsLeft,
     MessageCircleQuestionIcon,
@@ -58,15 +56,19 @@ export function Sidebar() {
                         setIsCollapsed(false)
                     }
                 }}
-                className='fixed top-4 left-4 z-50 rounded-lg p-2 text-white backdrop-blur-lg transition-all hover:text-white/60 md:hidden'
+                className='fixed top-4 left-4 z-50 cursor-pointer rounded-lg p-2 text-white backdrop-blur-lg transition-all hover:text-white/60 md:hidden'
             >
-                {isMobileOpen ? <X size={24} /> : <Menu size={24} />}
+                {isMobileOpen ? (
+                    <ChevronsLeft size={20} />
+                ) : (
+                    <ChevronsRight size={20} />
+                )}
             </button>
             <div
                 className={cn(
                     'fixed top-0 left-0 z-40 h-screen flex-col bg-purple-700/10 backdrop-blur-[10px] transition-all duration-300 md:flex',
                     isMobileOpen ? 'flex' : 'hidden md:flex',
-                    isCollapsed ? 'w-auto' : 'w-[360px] md:w-[300px]'
+                    isCollapsed ? 'w-auto' : 'w-[340px] md:w-[300px]'
                 )}
             >
                 <div className='absolute top-4 left-28 items-center px-4 md:left-16 md:flex'>

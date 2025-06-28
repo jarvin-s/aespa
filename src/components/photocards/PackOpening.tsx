@@ -30,8 +30,6 @@ export default function PackOpening({
 }: PackOpeningProps) {
     const [selectedPack, setSelectedPack] = useState<PhotocardPack | null>(null)
     const [isOpening, setIsOpening] = useState(false)
-    const [openingResult, setOpeningResult] =
-        useState<PackOpeningResult | null>(null)
     const [revealedCards, setRevealedCards] = useState<
         (Photocard & { isHidden: boolean; isRevealing?: boolean })[]
     >([])
@@ -49,7 +47,6 @@ export default function PackOpening({
 
         try {
             const result = await onOpenPack(pack.id)
-            setOpeningResult(result)
             setRevealedCards(
                 result.cards_obtained.map((card) => ({
                     ...card,
@@ -95,7 +92,6 @@ export default function PackOpening({
             onOpeningComplete()
         }
         setSelectedPack(null)
-        setOpeningResult(null)
         setRevealedCards([])
         setShowingResults(false)
         setCurrentCardIndex(0)
@@ -183,49 +179,78 @@ export default function PackOpening({
                                 {selectedPack?.name} opened!
                             </h2>
                             <p className='text-gray-400'>
-                                Swipe cards left or right to reveal them
+                                Drag cards in any direction to reveal them
                             </p>
                         </div>
 
                         <div className='flex flex-col items-center gap-12'>
-                            <div className='flex w-full justify-center gap-8'>
+                            <div className='grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-12'>
                                 {/* Left revealed card */}
                                 {currentCardIndex > 0 && (
                                     <motion.div
                                         key={`revealed-0`}
                                         initial={{ opacity: 0, scale: 0.8 }}
                                         animate={{ opacity: 1, scale: 1 }}
-                                        className='flex justify-center'
                                     >
                                         <div className='relative'>
                                             <PhotocardDisplay
                                                 photocard={revealedCards[0]}
                                                 isOwned={true}
-                                                size='large'
-                                                className='transform hover:scale-105'
+                                                size='medium'
+                                                className='transform'
                                             />
-                                            {openingResult?.new_cards.includes(
-                                                revealedCards[0]
-                                            ) && (
-                                                <motion.div
-                                                    initial={{
-                                                        opacity: 0,
-                                                        y: 20,
-                                                    }}
-                                                    animate={{
-                                                        opacity: 1,
-                                                        y: 0,
-                                                    }}
-                                                    className='mt-2 font-bold text-green-400'
-                                                >
-                                                    NEW!
-                                                </motion.div>
-                                            )}
                                         </div>
                                     </motion.div>
                                 )}
 
-                                {/* Center card stack for dragging */}
+                                {currentCardIndex > 1 && (
+                                    <motion.div
+                                        key={`revealed-1`}
+                                        initial={{ opacity: 0, scale: 0.8 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                    >
+                                        <div className='relative'>
+                                            <PhotocardDisplay
+                                                photocard={revealedCards[1]}
+                                                isOwned={true}
+                                                size='medium'
+                                                className='transform'
+                                            />
+                                        </div>
+                                    </motion.div>
+                                )}
+
+                                {currentCardIndex > 2 && (
+                                    <motion.div
+                                        key={`revealed-2`}
+                                        initial={{ opacity: 0, scale: 0.8 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                    >
+                                        <div className='relative'>
+                                            <PhotocardDisplay
+                                                photocard={revealedCards[2]}
+                                                isOwned={true}
+                                                size='medium'
+                                                className='transform'
+                                            />
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </div>
+                            {currentCardIndex >= revealedCards.length && (
+                                <div className='flex justify-center'>
+                                    <Button
+                                        onClick={resetOpening}
+                                        className='bg-gradient-to-r from-purple-500 to-pink-500 px-8 py-3 text-white hover:from-purple-600 hover:to-pink-600'
+                                        size='lg'
+                                    >
+                                        Open another pack
+                                    </Button>
+                                </div>
+                            )}
+
+                            {/* Center card stack for dragging */}
+                            {currentCardIndex < revealedCards.length && (
                                 <div className='relative mb-8 flex min-h-[400px] items-center justify-center'>
                                     <AnimatePresence mode='popLayout'>
                                         {revealedCards.map(
@@ -263,10 +288,12 @@ export default function PackOpening({
                                                         {index ===
                                                         currentCardIndex ? (
                                                             <motion.div
-                                                                drag='x'
+                                                                drag
                                                                 dragConstraints={{
-                                                                    left: 0,
-                                                                    right: 0,
+                                                                    left: -100,
+                                                                    right: 100,
+                                                                    top: -100,
+                                                                    bottom: 100,
                                                                 }}
                                                                 dragElastic={
                                                                     0.7
@@ -275,12 +302,20 @@ export default function PackOpening({
                                                                     e,
                                                                     { offset }
                                                                 ) => {
-                                                                    const swipe =
-                                                                        offset.x
+                                                                    const distance =
+                                                                        Math.sqrt(
+                                                                            Math.pow(
+                                                                                offset.x,
+                                                                                2
+                                                                            ) +
+                                                                                Math.pow(
+                                                                                    offset.y,
+                                                                                    2
+                                                                                )
+                                                                        )
                                                                     if (
-                                                                        Math.abs(
-                                                                            swipe
-                                                                        ) > 100
+                                                                        distance >
+                                                                        100
                                                                     ) {
                                                                         handleCardReveal()
                                                                     }
@@ -338,80 +373,6 @@ export default function PackOpening({
                                         )}
                                     </AnimatePresence>
                                 </div>
-
-                                {currentCardIndex > 1 && (
-                                    <motion.div
-                                        key={`revealed-1`}
-                                        initial={{ opacity: 0, scale: 0.8 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        className='flex justify-start'
-                                    >
-                                        <div className='relative'>
-                                            <PhotocardDisplay
-                                                photocard={revealedCards[1]}
-                                                isOwned={true}
-                                                size='large'
-                                                className='transform hover:scale-105'
-                                            />
-                                            {openingResult?.new_cards.includes(
-                                                revealedCards[1]
-                                            ) && (
-                                                <motion.div
-                                                    initial={{
-                                                        opacity: 0,
-                                                        y: 20,
-                                                    }}
-                                                    animate={{
-                                                        opacity: 1,
-                                                        y: 0,
-                                                    }}
-                                                    className='mt-2 font-bold text-green-400'
-                                                >
-                                                    NEW!
-                                                </motion.div>
-                                            )}
-                                        </div>
-                                    </motion.div>
-                                )}
-                            </div>
-
-                            {currentCardIndex > 2 && (
-                                <motion.div
-                                    key={`revealed-2`}
-                                    initial={{ opacity: 0, scale: 0.8 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    className='flex justify-center'
-                                >
-                                    <div className='relative'>
-                                        <PhotocardDisplay
-                                            photocard={revealedCards[2]}
-                                            isOwned={true}
-                                            size='large'
-                                            className='transform hover:scale-105'
-                                        />
-                                        {openingResult?.new_cards.includes(
-                                            revealedCards[2]
-                                        ) && (
-                                            <motion.div
-                                                initial={{ opacity: 0, y: 20 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                className='mt-2 font-bold text-green-400'
-                                            >
-                                                NEW!
-                                            </motion.div>
-                                        )}
-                                    </div>
-                                </motion.div>
-                            )}
-
-                            {currentCardIndex >= revealedCards.length && (
-                                <Button
-                                    onClick={resetOpening}
-                                    className='bg-gradient-to-r from-purple-500 to-pink-500 px-8 py-3 text-white hover:from-purple-600 hover:to-pink-600'
-                                    size='lg'
-                                >
-                                    Open another pack
-                                </Button>
                             )}
                         </div>
                     </motion.div>

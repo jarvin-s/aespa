@@ -105,7 +105,7 @@ export default function CollectionView({
 
     return (
         <div className='mx-auto flex w-full max-w-7xl flex-col gap-4 p-4'>
-            {/* Filter Controls */}
+            {/* Filter controls */}
             <div className='flex flex-col justify-center gap-4 md:flex-row'>
                 <div className='relative flex items-center'>
                     <input
@@ -129,7 +129,7 @@ export default function CollectionView({
                                     | PhotocardMember
                             )
                         }
-                        className='cursor-pointer appearance-none rounded-md bg-purple-700 px-4 py-2 pr-8 text-white'
+                        className='w-full cursor-pointer appearance-none rounded-md bg-purple-700 px-4 py-2 pr-8 text-white'
                     >
                         <option value='all'>All</option>
                         <optgroup label='Rarity'>
@@ -166,7 +166,7 @@ export default function CollectionView({
                                 e.target.value as 'name' | 'rarity' | 'date'
                             )
                         }
-                        className='cursor-pointer appearance-none rounded-md bg-purple-700 px-4 py-2 pr-8 text-white'
+                        className='w-full cursor-pointer appearance-none rounded-md bg-purple-700 px-4 py-2 pr-8 text-white'
                     >
                         <option value='name'>Sort by name</option>
                         <option value='rarity'>Sort by rarity</option>
@@ -194,7 +194,7 @@ export default function CollectionView({
                 </label>
             </div>
 
-            {/* Cards Grid */}
+            {/* Cards grid */}
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -212,7 +212,6 @@ export default function CollectionView({
                                 photocard={photocard}
                                 isOwned={isOwned}
                                 isFavorited={isFavorited}
-                                size='large'
                                 onClick={() => onCardClick?.(photocard)}
                                 onFavorite={() =>
                                     onFavoriteToggle?.(photocard.id)

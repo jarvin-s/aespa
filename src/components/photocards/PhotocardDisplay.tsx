@@ -32,12 +32,6 @@ export default function PhotocardDisplay({
     const rarityConfig = RARITY_CONFIG[photocard.rarity]
     const memberConfig = MEMBER_CONFIG[photocard.member]
 
-    const sizeClasses = {
-        small: 'w-24 h-32',
-        medium: 'w-32 h-44',
-        large: 'w-48 h-72',
-    }
-
     const textSizes = {
         small: 'text-xs',
         medium: 'text-sm',
@@ -46,7 +40,7 @@ export default function PhotocardDisplay({
 
     return (
         <motion.div
-            className={`relative ${sizeClasses[size]} cursor-pointer ${className}`}
+            className={`relative h-56 w-40 cursor-pointer md:h-72 md:w-48 ${className}`}
             onClick={onClick}
         >
             {/* Card Container */}
