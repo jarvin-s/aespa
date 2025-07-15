@@ -15,6 +15,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import { Bebas_Neue } from 'next/font/google'
+
+const bebasNeue = Bebas_Neue({
+    subsets: ['latin'],
+    weight: ['400'],
+})
 
 export default function QuizCreation() {
     const { user, isLoaded } = useUser()
@@ -35,7 +41,19 @@ export default function QuizCreation() {
 
     return (
         <div className='quiz-creation flex min-h-screen flex-col overflow-x-hidden text-white'>
-            <main className='flex min-h-screen flex-col items-center justify-center p-6 text-center'>
+            <motion.header
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className='relative flex w-full justify-center px-6 py-4 text-white'
+            >
+                <h1
+                    className={`${bebasNeue.className} text-7xl font-bold md:text-9xl`}
+                >
+                    Quiz
+                </h1>
+            </motion.header>
+            <main className='flex h-[80vh] flex-col items-center justify-center p-6 text-center'>
                 <div className='mx-auto w-full max-w-[904px]'>
                     <AnimatePresence mode='wait'>
                         {!showConfig ? (

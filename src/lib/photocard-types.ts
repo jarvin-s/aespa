@@ -35,6 +35,7 @@ export interface Photocard {
     created_at: string
     updated_at: string
     era?: PhotocardEra
+    isHidden?: boolean
 }
 
 export interface UserPhotocard {

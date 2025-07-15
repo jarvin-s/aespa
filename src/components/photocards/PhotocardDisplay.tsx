@@ -3,7 +3,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { motion } from 'motion/react'
-import { Heart, Star } from 'lucide-react'
+import { Heart, Lock, Star } from 'lucide-react'
 import type { Photocard } from '@/lib/photocard-types'
 import { RARITY_CONFIG, MEMBER_CONFIG } from '@/lib/photocard-types'
 import { Badge } from '@/components/ui/badge'
@@ -32,12 +32,6 @@ export default function PhotocardDisplay({
     const rarityConfig = RARITY_CONFIG[photocard.rarity]
     const memberConfig = MEMBER_CONFIG[photocard.member]
 
-    const sizeClasses = {
-        small: 'w-24 h-32',
-        medium: 'w-32 h-44',
-        large: 'w-48 h-72',
-    }
-
     const textSizes = {
         small: 'text-xs',
         medium: 'text-sm',
@@ -46,7 +40,7 @@ export default function PhotocardDisplay({
 
     return (
         <motion.div
-            className={`relative ${sizeClasses[size]} cursor-pointer ${className}`}
+            className={`relative h-56 w-40 cursor-pointer md:h-72 md:w-48 ${className}`}
             onClick={onClick}
         >
             {/* Card Container */}
@@ -91,7 +85,7 @@ export default function PhotocardDisplay({
                             <div className='flex items-center gap-1'>
                                 {/* Rarity Badge */}
                                 <Badge
-                                    className={`bg-gradient-to-r px-1 py-0 text-xs ${rarityConfig.gradient} border-none text-white`}
+                                    className={`bg-gradient-to-r px-1 py-0 text-sm ${rarityConfig.gradient} border-none text-white`}
                                 >
                                     {rarityConfig.name}
                                 </Badge>
@@ -124,8 +118,8 @@ export default function PhotocardDisplay({
                 {/* Not Owned Overlay */}
                 {!isOwned && (
                     <div className='absolute inset-0 z-20 flex items-center justify-center bg-black/50'>
-                        <div className='text-center text-white'>
-                            <div className='text-lg'>🔒</div>
+                        <div className='flex flex-col items-center text-center text-white'>
+                            <Lock size={24} />
                             <div className='mt-1 text-xs'>Not owned</div>
                         </div>
                     </div>

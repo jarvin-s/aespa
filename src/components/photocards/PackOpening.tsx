@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { Sparkles, Package, Gift } from 'lucide-react'
+import { Package } from 'lucide-react'
 import PhotocardDisplay from './PhotocardDisplay'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -30,10 +30,11 @@ export default function PackOpening({
 }: PackOpeningProps) {
     const [selectedPack, setSelectedPack] = useState<PhotocardPack | null>(null)
     const [isOpening, setIsOpening] = useState(false)
-    const [openingResult, setOpeningResult] =
-        useState<PackOpeningResult | null>(null)
-    const [revealedCards, setRevealedCards] = useState<Photocard[]>([])
+    const [revealedCards, setRevealedCards] = useState<
+        (Photocard & { isHidden: boolean; isRevealing?: boolean })[]
+    >([])
     const [showingResults, setShowingResults] = useState(false)
+    const [currentCardIndex, setCurrentCardIndex] = useState(0)
 
     const handleOpenPack = async (pack: PhotocardPack) => {
         if (isOpening) return
@@ -42,11 +43,17 @@ export default function PackOpening({
         setIsOpening(true)
         setRevealedCards([])
         setShowingResults(false)
+        setCurrentCardIndex(0)
 
         try {
             const result = await onOpenPack(pack.id)
-            setOpeningResult(result)
-            await animateCardReveal(result.cards_obtained)
+            setRevealedCards(
+                result.cards_obtained.map((card) => ({
+                    ...card,
+                    isHidden: true,
+                }))
+            )
+            setShowingResults(true)
         } catch (error) {
             console.error('Error opening pack:', error)
         } finally {
@@ -54,13 +61,30 @@ export default function PackOpening({
         }
     }
 
-    const animateCardReveal = async (cards: Photocard[]) => {
-        setShowingResults(true)
+    const handleCardReveal = () => {
+        if (currentCardIndex >= revealedCards.length) return
 
-        for (let i = 0; i < cards.length; i++) {
-            await new Promise((resolve) => setTimeout(resolve, 800))
-            setRevealedCards((prev) => [...prev, cards[i]])
-        }
+        setRevealedCards((prev) => {
+            const newCards = [...prev]
+            newCards[currentCardIndex] = {
+                ...newCards[currentCardIndex],
+                isHidden: false,
+                isRevealing: true,
+            }
+            return newCards
+        })
+
+        setTimeout(() => {
+            setRevealedCards((prev) => {
+                const newCards = [...prev]
+                newCards[currentCardIndex] = {
+                    ...newCards[currentCardIndex],
+                    isRevealing: false,
+                }
+                return newCards
+            })
+            setCurrentCardIndex((prev) => prev + 1)
+        }, 500)
     }
 
     const resetOpening = () => {
@@ -68,9 +92,9 @@ export default function PackOpening({
             onOpeningComplete()
         }
         setSelectedPack(null)
-        setOpeningResult(null)
         setRevealedCards([])
         setShowingResults(false)
+        setCurrentCardIndex(0)
     }
 
     const availablePacks = packs.filter(
@@ -88,18 +112,6 @@ export default function PackOpening({
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
                     >
-                        <div className='mb-8 text-center'>
-                            <motion.div className='mb-4 inline-block'>
-                                <Gift size={48} className='text-purple-500' />
-                            </motion.div>
-                            <h2 className='mb-2 text-3xl font-bold text-white md:text-5xl'>
-                                Photocard packs
-                            </h2>
-                            <p className='text-md text-gray-300 md:text-xl'>
-                                Open packs to collect aespa photocards!
-                            </p>
-                        </div>
-
                         <div className='mb-8 flex flex-col items-center gap-4'>
                             <h3 className='mb-4 text-xl font-bold text-white'>
                                 Available packs
@@ -166,172 +178,203 @@ export default function PackOpening({
                             <h2 className='mb-2 text-3xl font-bold text-white'>
                                 {selectedPack?.name} opened!
                             </h2>
+                            <p className='text-gray-400'>
+                                Drag cards in any direction to reveal them
+                            </p>
                         </div>
 
-                        <div className='mb-8 grid grid-cols-1 gap-6 md:grid-cols-3'>
-                            {selectedPack &&
-                                Array.from({
-                                    length: selectedPack.cards_per_pack,
-                                }).map((_, index) => (
-                                    <div
-                                        key={index}
-                                        className='flex justify-center'
+                        <div className='flex flex-col items-center gap-12'>
+                            <div className='grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-12'>
+                                {/* Left revealed card */}
+                                {currentCardIndex > 0 && (
+                                    <motion.div
+                                        key={`revealed-0`}
+                                        initial={{ opacity: 0, scale: 0.8 }}
+                                        animate={{ opacity: 1, scale: 1 }}
                                     >
-                                        {revealedCards[index] ? (
-                                            <motion.div
-                                                initial={{
-                                                    scale: 0,
-                                                    rotate: 180,
-                                                }}
-                                                animate={{
-                                                    scale: 1,
-                                                    rotate: 0,
-                                                }}
-                                                transition={{
-                                                    type: 'spring',
-                                                    stiffness: 300,
-                                                    damping: 20,
-                                                    delay: 0.2,
-                                                }}
-                                            >
-                                                <PhotocardDisplay
-                                                    photocard={
-                                                        revealedCards[index]
-                                                    }
-                                                    isOwned={true}
-                                                    size='large'
-                                                    className='transform hover:scale-105'
-                                                />
-                                                {openingResult?.new_cards.includes(
-                                                    revealedCards[index]
-                                                ) && (
-                                                    <motion.div
-                                                        initial={{
-                                                            opacity: 0,
-                                                            y: 20,
-                                                        }}
-                                                        animate={{
-                                                            opacity: 1,
-                                                            y: 0,
-                                                        }}
-                                                        className='mt-2 font-bold text-green-400'
-                                                    >
-                                                        NEW!
-                                                    </motion.div>
-                                                )}
-                                            </motion.div>
-                                        ) : (
-                                            <motion.div className='flex h-64 w-48 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-purple-700'>
-                                                <Package
-                                                    size={48}
-                                                    className='text-white'
-                                                />
-                                            </motion.div>
-                                        )}
-                                    </div>
-                                ))}
-                        </div>
+                                        <div className='relative'>
+                                            <PhotocardDisplay
+                                                photocard={revealedCards[0]}
+                                                isOwned={true}
+                                                size='medium'
+                                                className='transform'
+                                            />
+                                        </div>
+                                    </motion.div>
+                                )}
 
-                        {openingResult &&
-                            revealedCards.length ===
-                                openingResult.cards_obtained.length && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.5 }}
-                                    className='mb-6'
-                                >
-                                    <Card className='border-purple-500/30 bg-black/40'>
-                                        <CardContent className='p-6'>
-                                            <h3 className='mb-4 text-xl font-bold text-white'>
-                                                Opening results
-                                            </h3>
-                                            <div className='flex flex-col justify-center gap-4 text-center md:flex-row'>
-                                                <div>
-                                                    <div className='text-2xl font-bold text-green-400'>
-                                                        {
-                                                            openingResult
-                                                                .new_cards
-                                                                .length
-                                                        }
-                                                    </div>
-                                                    <div className='text-sm text-gray-300'>
-                                                        New cards
-                                                    </div>
-                                                </div>
-                                                <div className='flex flex-col justify-between text-sm text-gray-300'>
-                                                    Rarities obtained:
-                                                    <div className='flex justify-center gap-2'>
-                                                        {Object.entries(
-                                                            openingResult.cards_obtained.reduce(
-                                                                (acc, card) => {
-                                                                    acc[
-                                                                        card.rarity
-                                                                    ] =
-                                                                        (acc[
-                                                                            card
-                                                                                .rarity
-                                                                        ] ||
-                                                                            0) +
-                                                                        1
-                                                                    return acc
-                                                                },
-                                                                {} as Record<
-                                                                    string,
-                                                                    number
-                                                                >
-                                                            )
-                                                        ).map(
-                                                            ([
-                                                                rarity,
-                                                                count,
-                                                            ]) => {
-                                                                const config =
-                                                                    RARITY_CONFIG[
-                                                                        rarity as keyof typeof RARITY_CONFIG
-                                                                    ]
-                                                                return (
-                                                                    <div
-                                                                        key={
-                                                                            rarity
-                                                                        }
-                                                                        className={`rounded-full bg-gradient-to-r px-3 py-1 text-xs font-bold ${config.gradient} text-white`}
-                                                                    >
-                                                                        {count}x{' '}
-                                                                        {
-                                                                            config.name
-                                                                        }
-                                                                    </div>
-                                                                )
-                                                            }
-                                                        )}
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div className='text-2xl font-bold text-yellow-400'>
-                                                        {
-                                                            openingResult
-                                                                .duplicates
-                                                                .length
-                                                        }
-                                                    </div>
-                                                    <div className='text-sm text-gray-300'>
-                                                        Duplicates
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                </motion.div>
+                                {currentCardIndex > 1 && (
+                                    <motion.div
+                                        key={`revealed-1`}
+                                        initial={{ opacity: 0, scale: 0.8 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                    >
+                                        <div className='relative'>
+                                            <PhotocardDisplay
+                                                photocard={revealedCards[1]}
+                                                isOwned={true}
+                                                size='medium'
+                                                className='transform'
+                                            />
+                                        </div>
+                                    </motion.div>
+                                )}
+
+                                {currentCardIndex > 2 && (
+                                    <motion.div
+                                        key={`revealed-2`}
+                                        initial={{ opacity: 0, scale: 0.8 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                    >
+                                        <div className='relative'>
+                                            <PhotocardDisplay
+                                                photocard={revealedCards[2]}
+                                                isOwned={true}
+                                                size='medium'
+                                                className='transform'
+                                            />
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </div>
+                            {currentCardIndex >= revealedCards.length && (
+                                <div className='flex justify-center'>
+                                    <Button
+                                        onClick={resetOpening}
+                                        className='bg-gradient-to-r from-purple-500 to-pink-500 px-8 py-3 text-white hover:from-purple-600 hover:to-pink-600'
+                                        size='lg'
+                                    >
+                                        Open another pack
+                                    </Button>
+                                </div>
                             )}
 
-                        <Button
-                            onClick={resetOpening}
-                            className='bg-gradient-to-r from-purple-500 to-pink-500 px-8 py-3 text-white hover:from-purple-600 hover:to-pink-600'
-                            size='lg'
-                        >
-                            Open another pack
-                        </Button>
+                            {/* Center card stack for dragging */}
+                            {currentCardIndex < revealedCards.length && (
+                                <div className='relative mb-8 flex min-h-[400px] items-center justify-center'>
+                                    <AnimatePresence mode='popLayout'>
+                                        {revealedCards.map(
+                                            (card, index) =>
+                                                index >= currentCardIndex && (
+                                                    <motion.div
+                                                        key={`stack-${index}`}
+                                                        className='perspective-1000 absolute'
+                                                        initial={false}
+                                                        animate={{
+                                                            x:
+                                                                (index -
+                                                                    currentCardIndex) *
+                                                                10,
+                                                            y:
+                                                                (index -
+                                                                    currentCardIndex) *
+                                                                10,
+                                                            rotate:
+                                                                (index -
+                                                                    currentCardIndex) *
+                                                                2,
+                                                            scale:
+                                                                index ===
+                                                                currentCardIndex
+                                                                    ? 1
+                                                                    : 0.95,
+                                                        }}
+                                                        style={{
+                                                            zIndex:
+                                                                revealedCards.length -
+                                                                index,
+                                                        }}
+                                                    >
+                                                        {index ===
+                                                        currentCardIndex ? (
+                                                            <motion.div
+                                                                drag
+                                                                dragConstraints={{
+                                                                    left: -100,
+                                                                    right: 100,
+                                                                    top: -100,
+                                                                    bottom: 100,
+                                                                }}
+                                                                dragElastic={
+                                                                    0.7
+                                                                }
+                                                                onDragEnd={(
+                                                                    e,
+                                                                    { offset }
+                                                                ) => {
+                                                                    const distance =
+                                                                        Math.sqrt(
+                                                                            Math.pow(
+                                                                                offset.x,
+                                                                                2
+                                                                            ) +
+                                                                                Math.pow(
+                                                                                    offset.y,
+                                                                                    2
+                                                                                )
+                                                                        )
+                                                                    if (
+                                                                        distance >
+                                                                        100
+                                                                    ) {
+                                                                        handleCardReveal()
+                                                                    }
+                                                                }}
+                                                                className='preserve-3d relative'
+                                                                animate={{
+                                                                    rotateY:
+                                                                        card.isHidden
+                                                                            ? 0
+                                                                            : 180,
+                                                                }}
+                                                                transition={{
+                                                                    type: 'spring',
+                                                                    stiffness: 260,
+                                                                    damping: 20,
+                                                                }}
+                                                                style={{
+                                                                    cursor: card.isHidden
+                                                                        ? 'grab'
+                                                                        : 'default',
+                                                                }}
+                                                            >
+                                                                <motion.div className='absolute inset-0 flex h-64 w-48 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-purple-700 backface-hidden'>
+                                                                    <Package
+                                                                        size={
+                                                                            48
+                                                                        }
+                                                                        className='text-white'
+                                                                    />
+                                                                </motion.div>
+
+                                                                <motion.div className='rotate-y-180 backface-hidden'>
+                                                                    <PhotocardDisplay
+                                                                        photocard={
+                                                                            card
+                                                                        }
+                                                                        isOwned={
+                                                                            true
+                                                                        }
+                                                                        size='large'
+                                                                        className='transform'
+                                                                    />
+                                                                </motion.div>
+                                                            </motion.div>
+                                                        ) : (
+                                                            <div className='flex h-64 w-48 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-purple-700'>
+                                                                <Package
+                                                                    size={48}
+                                                                    className='text-white opacity-50'
+                                                                />
+                                                            </div>
+                                                        )}
+                                                    </motion.div>
+                                                )
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                            )}
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -425,9 +468,9 @@ function PackCard({
         }
     }, [nextAvailable])
 
-    const handleOpenClick = async () => {
+    const handleOpenClick = () => {
         try {
-            await onOpen()
+            onOpen()
             setError(null)
         } catch (error: unknown) {
             const err = error as { error?: string; next_available?: string }
@@ -453,7 +496,7 @@ function PackCard({
                     </h3>
                     {pack.cost_type === 'aenergy' ? (
                         <div className='flex items-center gap-2'>
-                            <Sparkles className='h-5 w-5 text-purple-400' />
+                            <AenergyIcon />
                             <span className='font-bold text-purple-400'>
                                 {pack.cost_amount}
                             </span>
@@ -529,5 +572,23 @@ function PackCard({
                 <div className='pointer-events-none absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5' />
             )}
         </Card>
+    )
+}
+
+const AenergyIcon = () => {
+    return (
+        <>
+            <svg
+                xmlns='http://www.w3.org/2000/svg'
+                width='24'
+                height='24'
+                viewBox='0 0 64 64'
+            >
+                <path
+                    fill='#890096'
+                    d='M43.4.159L12.06 28.492l24.31 7.538L18.12 64l35.26-33.426l-18.978-8.464z'
+                />
+            </svg>
+        </>
     )
 }

@@ -84,15 +84,15 @@ export async function POST(request: NextRequest) {
         }
 
         if (pack.cost_type === 'free') {
-            const { data: cooldown } = await supabase
+            const { data: existingCooldown } = await supabase
                 .from('pack_opening_cooldowns')
                 .select('last_opened_at')
                 .eq('user_id', userId)
                 .eq('pack_id', pack_id)
                 .single()
 
-            if (cooldown) {
-                const lastOpened = new Date(cooldown.last_opened_at)
+            if (existingCooldown) {
+                const lastOpened = new Date(existingCooldown.last_opened_at)
                 const now = new Date()
                 const nextAvailable = new Date(lastOpened)
                 nextAvailable.setDate(nextAvailable.getDate() + 1)
@@ -103,6 +103,28 @@ export async function POST(request: NextRequest) {
                         next_available: nextAvailable.toISOString()
                     }, { status: 429 })
                 }
+
+                const { error: deleteError } = await supabase
+                    .from('pack_opening_cooldowns')
+                    .delete()
+                    .eq('user_id', userId)
+                    .eq('pack_id', pack_id)
+
+                if (deleteError) {
+                    return NextResponse.json({ error: 'Failed to reset cooldown' }, { status: 500 })
+                }
+            }
+
+            const { error: cooldownError } = await supabase
+                .from('pack_opening_cooldowns')
+                .insert({
+                    user_id: userId,
+                    pack_id: pack_id,
+                    last_opened_at: new Date().toISOString()
+                })
+
+            if (cooldownError) {
+                return NextResponse.json({ error: 'Failed to update cooldown' }, { status: 500 })
             }
         }
 
@@ -136,21 +158,6 @@ export async function POST(request: NextRequest) {
 
             if (updateError) {
                 return NextResponse.json({ error: 'Failed to deduct ænergy' }, { status: 500 })
-            }
-        }
-
-        // Update or insert cooldown for free packs
-        if (pack.cost_type === 'free') {
-            const { error: cooldownError } = await supabase
-                .from('pack_opening_cooldowns')
-                .upsert({
-                    user_id: userId,
-                    pack_id: pack_id,
-                    last_opened_at: new Date().toISOString()
-                })
-
-            if (cooldownError) {
-                return NextResponse.json({ error: 'Failed to update cooldown' }, { status: 500 })
             }
         }
 

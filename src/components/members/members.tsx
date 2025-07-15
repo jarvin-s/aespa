@@ -25,7 +25,7 @@ const Members = () => {
         {
             name: 'Giselle',
             hangul: '지젤',
-            image: '/images/members/giselle.png',
+            image: '/images/members/giselle-test.png',
             roles: ['Rapper', 'Vocalist'],
             description:
                 'Giselle, born Uchinaga Eri (Japanese: 内永 枝利) / Kim Aeri (김애리), is a South Korean-Japanese member of the girl group aespa. She was born in Seoul and raised in Tokyo, where she attended international schools and became fluent in Korean, Japanese, and English. Before debuting, she was part of her school choir, showing early interest in music and performance.',
@@ -91,7 +91,7 @@ const Members = () => {
     }
 
     return (
-        <div className='members relative min-h-screen overflow-hidden'>
+        <div className='members relative h-[100vh] overflow-hidden'>
             {/* Navigation Arrows */}
             <button
                 onClick={scrollPrev}
@@ -133,23 +133,24 @@ const Members = () => {
             </div>
 
             {/* Embla Carousel */}
-            <div className='embla select-none' ref={emblaRef}>
-                <div className='embla__container flex'>
+            <div className='embla h-full select-none' ref={emblaRef}>
+                <div className='embla__container flex h-full'>
                     {members.map((member, index) => (
                         <div
                             key={index}
                             className='embla__slide flex-[0_0_100%]'
                         >
                             {/* Mobile Layout */}
-                            <div className='flex flex-col items-center p-4 lg:hidden'>
-                                <div className='w-full max-w-sm p-6'>
-                                    <div className='relative mb-6 overflow-hidden'>
+                            <div className='flex h-full flex-col items-center p-4 lg:hidden'>
+                                <div className='flex h-full w-full max-w-sm flex-col p-6'>
+                                    <div className='relative mb-6 flex-1 overflow-hidden'>
                                         <Image
                                             src={member.image}
                                             alt={member.name.toLowerCase()}
                                             width={2000}
                                             height={2000}
                                             loading='lazy'
+                                            className='h-full w-full object-cover'
                                         />
                                     </div>
                                     <div className='space-y-4'>
@@ -186,16 +187,17 @@ const Members = () => {
                                 initial={{ opacity: 0, x: 100 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 1, delay: 0.5 }}
-                                className='hidden lg:block'
+                                className='hidden h-full lg:block'
                             >
-                                <div className='relative mx-auto mt-10 flex max-w-7xl justify-center gap-20 px-4'>
-                                    <div className='flex flex-col'>
+                                <div className='relative mx-auto flex h-full max-w-7xl justify-center gap-20 px-4'>
+                                    <div className='flex h-full flex-col'>
                                         <Image
                                             src={member.image}
                                             alt={member.name.toLowerCase()}
                                             width={2000}
                                             height={2000}
                                             loading='lazy'
+                                            className='h-full w-full object-cover'
                                         />
                                     </div>
                                     <div className='flex w-full flex-col'>

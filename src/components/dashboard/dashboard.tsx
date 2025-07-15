@@ -6,11 +6,11 @@ import { Check, X } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import { useUser } from '@clerk/nextjs'
 import { useEffect, useState } from 'react'
+import { motion } from 'motion/react'
 import { Bebas_Neue } from 'next/font/google'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import UserProfile from '@/components/ui/user-profile'
-import { motion } from 'motion/react'
 
 interface PastQuizzes {
     session_id: string
@@ -87,11 +87,6 @@ export default function QuizDashboard() {
                 transition={{ duration: 0.5 }}
                 className='relative flex w-full justify-center px-6 py-4 text-white'
             >
-                <div className='absolute top-10 left-4 md:top-14 md:left-8'>
-                    <Link href='/quiz'>
-                        <ArrowLeft />
-                    </Link>
-                </div>
                 <h1
                     className={`${bebasNeue.className} text-7xl font-bold md:text-9xl`}
                 >
@@ -272,67 +267,8 @@ export default function QuizDashboard() {
                             </div>
                         )}
                     </div>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 1.25, duration: 0.5 }}
-                        className='max-w-7xl'
-                    >
-                        <div className='rounded-md bg-gradient-to-br from-purple-400 to-purple-800 p-6 text-white shadow-lg'>
-                            <h3 className='mb-4 text-xl font-bold'>
-                                Quick links
-                            </h3>
-                            <div className='space-y-3'>
-                                <Link
-                                    href='/quiz'
-                                    className='block rounded-md bg-white/10 p-4 transition-all hover:bg-white/20'
-                                >
-                                    Take a new quiz
-                                </Link>
-                                <Link
-                                    href='/photocards'
-                                    className='block rounded-md bg-white/10 p-4 transition-all hover:bg-white/20'
-                                >
-                                    View photocard collection
-                                </Link>
-                                <Link
-                                    href='/leaderboard'
-                                    className='block rounded-md bg-white/10 p-4 transition-all hover:bg-white/20'
-                                >
-                                    Check out the leaderboard
-                                </Link>
-                                <Link
-                                    href='/'
-                                    className='block rounded-md bg-white/10 p-4 transition-all hover:bg-white/20'
-                                >
-                                    Back to home
-                                </Link>
-                            </div>
-                        </div>
-                    </motion.div>
                 </div>
             </main>
         </div>
-    )
-}
-
-const ArrowLeft = () => {
-    return (
-        <svg
-            xmlns='http://www.w3.org/2000/svg'
-            width='24'
-            height='24'
-            viewBox='0 0 24 24'
-        >
-            <path
-                fill='none'
-                stroke='currentColor'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth='2'
-                d='m12 19l-7-7l7-7m7 7H5'
-            />
-        </svg>
     )
 }

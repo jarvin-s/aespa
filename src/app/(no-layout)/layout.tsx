@@ -3,6 +3,7 @@ import { Inter_Tight } from 'next/font/google'
 import '@/app/globals.css'
 import { ClerkProvider } from '@clerk/nextjs'
 import { Analytics } from '@vercel/analytics/react'
+import { Sidebar } from '@/components/ui/sidebar'
 
 const interTight = Inter_Tight({
     weight: ['400'],
@@ -25,15 +26,12 @@ export const metadata: Metadata = {
     },
 }
 
-export default function RootLayout({
-    children,
-}: Readonly<{
-    children: React.ReactNode
-}>) {
+export default function NoLayout({ children }: { children: React.ReactNode }) {
     return (
         <ClerkProvider>
             <html lang='en'>
                 <body className={`${interTight.className} antialiased`}>
+                    <Sidebar />
                     {children}
                     <Analytics />
                 </body>
