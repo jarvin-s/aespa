@@ -36,14 +36,14 @@ export function Sidebar() {
             label: 'Quiz',
         },
         {
-            href: '/leaderboard',
-            icon: Trophy,
-            label: 'Leaderboard',
-        },
-        {
             href: '/photocards',
             icon: ImageIcon,
             label: 'Photocards',
+        },
+        {
+            href: '/leaderboard',
+            icon: Trophy,
+            label: 'Leaderboard',
         },
     ]
 

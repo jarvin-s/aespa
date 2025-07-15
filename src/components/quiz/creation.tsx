@@ -53,7 +53,7 @@ export default function QuizCreation() {
                     Quiz
                 </h1>
             </motion.header>
-            <main className='flex min-h-screen flex-col items-center justify-center p-6 text-center'>
+            <main className='flex h-[80vh] flex-col items-center justify-center p-6 text-center'>
                 <div className='mx-auto w-full max-w-[904px]'>
                     <AnimatePresence mode='wait'>
                         {!showConfig ? (
